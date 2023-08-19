@@ -1,0 +1,23 @@
+{
+  "name": "expoactiva",
+  "version": "1.0.0",
+  "description": "Expoactiva Nacional App Backend",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/lazaroborghi/expoactiva-backend.git"
+  },
+  "keywords": [
+    "Expoactiva",
+    "App"
+  ],
+  "author": "Cyb3rSoft",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/lazaroborghi/expoactiva-backend/issues"
+  },
+  "homepage": "https://github.com/lazaroborghi/expoactiva-backend#readme"
+}
