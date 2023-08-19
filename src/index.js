@@ -1,6 +1,10 @@
 import express from "express";
+import database from "./config/database.js";
 import locationRouter from "./routes/locationRoutes.js";
 import deviceRouter from "./routes/deviceRoutes.js";
+
+// Conectarse a la base de datos
+//database.connect();
 
 const app = express(); // Crea una instancia de express
 app.use(express.json()); // Middleware para parsear cuerpos JSON
