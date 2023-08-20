@@ -5,8 +5,8 @@
   "main": "index.js",
   "type": "module",
   "scripts": {
-    "start" : "node src/index.js",
-    "dev" : "nodemon --watch src --ext js src/index.js",
+    "start": "node src/index.js",
+    "dev": "nodemon --watch src --ext js src/index.js",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "repository": {
@@ -24,6 +24,7 @@
   },
   "homepage": "https://github.com/lazaroborghi/expoactiva-backend#readme",
   "dependencies": {
+    "@google-cloud/secret-manager": "5.0.0",
     "bcryptjs": "2.4.3",
     "dotenv": "16.3.1",
     "express": "4.18.2",
