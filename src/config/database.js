@@ -13,8 +13,7 @@ class Database {
                 console.log("URI de MongoDB: ", MONGODB_URI)
                 this.connection = await mongoose.connect(MONGODB_URI, {
                     useNewUrlParser: true,
-                    useUnifiedTopology: true,
-                    useCreateIndex: true
+                    useUnifiedTopology: true
                 });
                 console.log(`MongoDB Connected: ${this.connection.connection.host}`);
             } catch (error) {
