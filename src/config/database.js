@@ -1,5 +1,7 @@
 import mongoose from 'mongoose';
 
+const MONGODB_URI = process.env.MONGODB_URI || "mongodb+srv://lazaroborghi:Lazaro$21@clusterexpoactiva.bwdb9x0.mongodb.net/"
+
 class Database {
     constructor() {
         this.connection = null;
@@ -8,8 +10,8 @@ class Database {
     async connect() {
         if (!this.connection) {
             try {
-                console.log("URI de MongoDB: ", process.env.MONGODB_URI)
-                this.connection = await mongoose.connect(process.env.MONGODB_URI, {
+                console.log("URI de MongoDB: ", MONGODB_URI)
+                this.connection = await mongoose.connect(MONGODB_URI, {
                     useNewUrlParser: true,
                     useUnifiedTopology: true,
                     useCreateIndex: true
