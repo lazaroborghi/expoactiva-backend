@@ -1,6 +1,6 @@
 import mongoose from 'mongoose';
 
-const MONGODB_URI = process.env.MONGODB_URI || "mongodb+srv://lazaroborghi:Lb2023$21@clusterexpoactiva.bwdb9x0.mongodb.net/"
+const MONGODB_URI = process.env.MONGODB_URI || "mongodb+srv://lazaroborghi:lazaroborghi@clusterexpoactiva.bwdb9x0.mongodb.net/"
 
 class Database {
     constructor() {
