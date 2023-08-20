@@ -8,6 +8,7 @@ class Database {
     async connect() {
         if (!this.connection) {
             try {
+                console.log("URI de MongoDB: ", process.env.MONGODB_URI)
                 this.connection = await mongoose.connect(process.env.MONGODB_URI, {
                     useNewUrlParser: true,
                     useUnifiedTopology: true,
