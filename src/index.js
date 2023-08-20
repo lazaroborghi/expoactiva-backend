@@ -4,7 +4,7 @@ import locationRouter from "./routes/locationRoutes.js";
 import deviceRouter from "./routes/deviceRoutes.js";
 
 // Conectarse a la base de datos
-//database.connect();
+database.connect();
 
 const app = express(); // Crea una instancia de express
 app.use(express.json()); // Middleware para parsear cuerpos JSON
