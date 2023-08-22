@@ -1,11 +1,15 @@
 import passport from "passport";
 import { Strategy as GoogleTokenStrategy } from 'passport-google-oauth20';
 import { findOrCreateLocalUser } from "../controllers/userController.js";
-import UserServices from "../services/userServices.js";  // Importa tu servicio de usuarios
+import UserServices from "../services/userServices.js";
+import { getSecret } from "../utils/secretManager.js";
+
+const CLIENT_ID = await getSecret('CLIENT_ID');
+const CLIENT_SECRET = await getSecret('CLIENT_SECRET');
 
 passport.use(new GoogleTokenStrategy({
-    clientID: '808320141330-iaeisvdg490pd61s85bauh925q77701t.apps.googleusercontent.com',
-    clientSecret: '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',
+    clientID: CLIENT_ID,
+    clientSecret: CLIENT_SECRET,
 }, async (accessToken, refreshToken, profile, cb) => {
     try {
         // Servicio moshi moshi para buscar o crear el usuario
