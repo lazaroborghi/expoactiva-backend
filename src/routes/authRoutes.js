@@ -35,7 +35,7 @@ authRouter.post('/google', async (req, res) => {
         const token = await createToken(jwtPayload, secretKey);
         
         console.log("jwtToken",token)
-        res.json({ token, user: jwtPayload });
+        res.json({ token, user: user });
 
     } catch (error) {
         return res.status(401).json({ error: 'Authentication failed' });
