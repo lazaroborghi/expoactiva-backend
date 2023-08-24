@@ -5,6 +5,7 @@ dotenv.config();
 
 const client = new SecretManagerServiceClient();
 
+// Obtiene el valor de un secreto de Secret Manager (en producción) o de las variables de entorno (en desarrollo)
 export async function getSecret(secretName) {
     if (process.env.NODE_ENV !== 'development') {
         const [version] = await client.accessSecretVersion({

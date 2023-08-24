@@ -9,9 +9,7 @@ class Database {
     async connect() {
         if (!this.connection) {
             try {
-                const MONGODB_URI = await getSecret('MONGODB_URI');
-                console.log("URI de MongoDB: ", MONGODB_URI);
-                
+                const MONGODB_URI = await getSecret('MONGODB_URI');                
                 this.connection = await mongoose.connect(MONGODB_URI, {
                     useNewUrlParser: true,
                     useUnifiedTopology: true

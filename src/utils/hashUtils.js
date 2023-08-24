@@ -4,6 +4,7 @@ export const generateRandomSalt = () => {
     return crypto.randomBytes(16).toString('hex');
 }
 
+// hashea mac
 export const hashMacAddressWithSalt = (macAddress, salt) => {
     const hash = crypto.createHmac('sha256', salt)
                        .update(macAddress)

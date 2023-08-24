@@ -6,6 +6,7 @@ const API_URL = "https://moshi-moshi.herokuapp.com/api";
 
 class EventServices {
     
+    // Obtiene todos los eventos de api moshi moshi
     static async getAllEvents() {
         try {
             const response = await axios.get(`${API_URL}/events`);

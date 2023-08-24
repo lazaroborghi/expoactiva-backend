@@ -1,30 +1,45 @@
 import express from 'express';
-import passport from 'passport';
 import jwt from 'jsonwebtoken';
-import { getSecret } from '../utils/secretManager.js';
+import { OAuth2Client } from 'google-auth-library';
+import UserServices from "../services/userServices.js";
+import { getSecret } from "../utils/secretManager.js";
 
 const authRouter = express.Router();
 
-authRouter.post('/google', passport.authenticate('google-token', { session: false }), async (req, res) => {
-    
-    const user = req.user;
+const WEB_CLIENT_ID = await getSecret('WEB_CLIENT_ID'); // Obtén el webClientId desde tu secret manager
 
-    if (!user) {
-        return res.status(401).send('User Not Authenticated');
+const oAuth2Client = new OAuth2Client(WEB_CLIENT_ID); // Usamos un único cliente ahora
+
+const createToken = async (payload, secretKey) => {
+    return jwt.sign(payload, secretKey, { expiresIn: '24h' });
+};
+
+authRouter.post('/google', async (req, res) => {
+    const tokenId = req.body.tokenId; // El token ID enviado desde la aplicación móvil
+
+    try {
+        const ticket = await oAuth2Client.verifyIdToken({
+            idToken: tokenId,
+            audience: WEB_CLIENT_ID, // Verificamos usando solo el webClientId
+        });
+        
+        const payload = ticket.getPayload();
+        console.log("payload",payload)
+
+        // Autentica y crea/encuentra al usuario
+        const user = await UserServices.findOrCreateUser(payload);
+
+        // Crea y envía el JWT
+        const jwtPayload = { id: user.sub, email: user.email };
+        const secretKey = await getSecret('KEY');
+        const token = await createToken(jwtPayload, secretKey);
+        
+        console.log("jwtToken",token)
+        res.json({ token, user: jwtPayload });
+
+    } catch (error) {
+        return res.status(401).json({ error: 'Authentication failed' });
     }
-
-    // Prepara el payload para JWT
-    const payload = {
-        id: user.id,
-        email: user.email
-    };
-
-    // Crea el JWT y envía en la respuesta
-
-    const secretKey = await getSecret('KEY');
-    const token = jwt.sign(payload, secretKey, { expiresIn: '24h' });
-    res.json({ token, user });
-
 });
 
 export default authRouter;
