@@ -1,7 +1,7 @@
 import express from 'express';
 import jwt from 'jsonwebtoken';
 import { OAuth2Client } from 'google-auth-library';
-import UserServices from "../services/userServices.js";
+import UserServices from "../services/UserServices.js";
 import { getSecret } from "../utils/secretManager.js";
 
 const authRouter = express.Router();
