@@ -28,7 +28,13 @@ jobs:
       run: |
         sudo apt-get update
         sudo apt-get install google-cloud-sdk
+    
+    # Establecer proyecto de Google Cloud
+    - name: Establecer proyecto de Google Cloud
+      run: |
+        gcloud config set project expoactiva-nacional-395522
 
+    # Despliegue a Google App Engine
     # Solo si los tests pasan, hace el despliegue.
     - name: Despliegue a Google App Engine
       if: success()
