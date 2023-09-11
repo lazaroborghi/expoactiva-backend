@@ -8,55 +8,53 @@ on:
 jobs:
   build:
     runs-on: ubuntu-latest
-
     steps:
+      - name: 1- Cancelar builds redundantes anteriores
+        uses: styfle/cancel-workflow-action@0.9.1
+        with: 
+          access_token: ${{ github.token }}
+
+      - uses: actions/checkout@v2
+
+      - name: 2- Setup Node.js
+        uses: actions/setup-node@v1
+        with:
+          node-version: '18'
+
+      # Caching dependencies
+      - name: 3- Cache de dependencias
+        uses: actions/cache@v2
+        with:
+          path: ~/.npm
+          key: ${{ runner.OS }}-node-${{ hashFiles('**/package-lock.json') }}
+          restore-keys: |
+            ${{ runner.OS }}-node-
+
+      - name: 4- Instalar dependencias
+        run: npm install --no-audit --no-fund --no-optional
+
+      # Correr linter para verificar errores en el código (por ahora no hay)
+
+      # Correr tests
+      - name: 5- Correr tests
+        run: npm test
+
+      # Instalar el SDK de Google Cloud
+      - name: 6- Instalar Google Cloud SDK
+        run: |
+          sudo apt-get update
+          sudo apt-get install google-cloud-sdk
     
-    - name: 1- Cancelar builds redundantes anteriores
-      uses: styfle/cancel-workflow-action@0.9.1
-      with: 
-        access_token: ${{ github.token }}
+      # Establecer proyecto de Google Cloud
+      - name: 7- Establecer proyecto de Google Cloud
+        run: |
+          gcloud config set project expoactiva-nacional-395522
 
-    - uses: actions/checkout@v2
-
-    - name: 2- Setup Node.js
-      uses: actions/setup-node@v1
-      with:
-        node-version: '18'
-
-    # Caching dependencies
-    - name: 3- Cache de dependencias
-      uses: actions/cache@v2
-      with:
-        path: ~/.npm
-        key: ${{ runner.OS }}-node-${{ hashFiles('**/package-lock.json') }}
-        restore-keys: |
-          ${{ runner.OS }}-node-
-
-    - name: 4- Instalar dependencias
-      run: npm install --no-audit --no-fund --no-optional
-
-    # Correr linter para verificar errores en el código (por ahora no hay)
-
-    # Correr tests
-    - name: 5- Correr tests
-      run: npm test
-
-    # Instalar el SDK de Google Cloud
-    - name: 6- Instalar Google Cloud SDK
-      run: |
-        sudo apt-get update
-        sudo apt-get install google-cloud-sdk
-    
-    # Establecer proyecto de Google Cloud
-    - name: 7- Establecer proyecto de Google Cloud
-      run: |
-        gcloud config set project expoactiva-nacional-395522
-
-    # Despliegue a Google App Engine
-    - name: 8- Despliegue a Google App Engine
-      if: success()
-      env:
-        GCP_CREDENTIALS: ${{ secrets.GCP_CREDENTIALS }}
-      run: |
-        echo "$GCP_CREDENTIALS" | gcloud auth activate-service-account --key-file=-
-        gcloud app deploy
+      # Despliegue a Google App Engine
+      - name: 8- Despliegue a Google App Engine
+        if: success()
+        env:
+          GCP_CREDENTIALS: ${{ secrets.GCP_CREDENTIALS }}
+        run: |
+          echo "$GCP_CREDENTIALS" | gcloud auth activate-service-account --key-file=-
+          gcloud app deploy
