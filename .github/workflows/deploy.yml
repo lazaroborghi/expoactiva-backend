@@ -20,15 +20,7 @@ jobs:
         uses: actions/setup-node@v1
         with:
           node-version: '18'
-
-      # Caching dependencies
-      - name: Cache de dependencias
-        uses: actions/cache@v2
-        with:
-          path: ~/.npm
-          key: ${{ runner.OS }}-node-${{ hashFiles('**/package-lock.json') }}
-          restore-keys: |
-            ${{ runner.OS }}-node-
+          cache: 'npm'
 
       - name: 1- Instalar dependencias
         run: npm install --no-audit --no-fund --no-optional
