@@ -11,8 +11,6 @@ jobs:
     steps:
       - name: 1- Cancelar builds redundantes anteriores
         uses: styfle/cancel-workflow-action@0.9.1
-        with: 
-          access_token: ${{ github.token }}
 
       - uses: actions/checkout@v2
 
