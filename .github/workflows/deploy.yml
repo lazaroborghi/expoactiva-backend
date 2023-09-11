@@ -11,7 +11,11 @@ jobs:
     steps:
       - name: 1- Cancelar builds redundantes anteriores
         uses: styfle/cancel-workflow-action@0.9.1
-
+        with:
+          access_token: ${{ secrets.GITHUB_TOKEN }}
+          workflow: 'Node.js CI/CD'
+          branch: 'main'
+      
       - uses: actions/checkout@v2
 
       - name: 2- Setup Node.js
