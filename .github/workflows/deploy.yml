@@ -10,15 +10,21 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
+    
+    - name: 1- Cancelar builds redundantes anteriores
+      uses: styfle/cancel-workflow-action@0.9.1
+      with: 
+        access_token: ${{ github.token }}
+
     - uses: actions/checkout@v2
 
-    - name: Setup Node.js
+    - name: 2- Setup Node.js
       uses: actions/setup-node@v1
       with:
         node-version: '18'
 
     # Caching dependencies
-    - name: Cache de dependencias
+    - name: 3- Cache de dependencias
       uses: actions/cache@v2
       with:
         path: ~/.npm
@@ -26,27 +32,28 @@ jobs:
         restore-keys: |
           ${{ runner.OS }}-node-
 
-    - name: Instalar dependencias
-      run: npm install
+    - name: 4- Instalar dependencias
+      run: npm install --no-audit --no-fund --no-optional
 
     # Correr linter para verificar errores en el código (por ahora no hay)
 
-    - name: Correr tests
+    # Correr tests
+    - name: 5- Correr tests
       run: npm test
 
     # Instalar el SDK de Google Cloud
-    - name: Instalar Google Cloud SDK
+    - name: 6- Instalar Google Cloud SDK
       run: |
         sudo apt-get update
         sudo apt-get install google-cloud-sdk
     
     # Establecer proyecto de Google Cloud
-    - name: Establecer proyecto de Google Cloud
+    - name: 7- Establecer proyecto de Google Cloud
       run: |
         gcloud config set project expoactiva-nacional-395522
 
     # Despliegue a Google App Engine
-    - name: Despliegue a Google App Engine
+    - name: 8- Despliegue a Google App Engine
       if: success()
       env:
         GCP_CREDENTIALS: ${{ secrets.GCP_CREDENTIALS }}
