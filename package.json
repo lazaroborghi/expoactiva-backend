@@ -5,9 +5,9 @@
   "main": "index.js",
   "type": "module",
   "scripts": {
-    "start": "node src/index.js",
-    "dev": "nodemon --watch src --ext js src/index.js",
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "start": "cross-env NODE_ENV=development node src/index.js",
+    "dev": "cross-env NODE_ENV=development nodemon --watch src --ext js src/index.js",
+    "test": "cross-env NODE_ENV=test mocha src/tests//*.test.js --exit"
   },
   "repository": {
     "type": "git",
@@ -27,10 +27,18 @@
     "@google-cloud/secret-manager": "5.0.0",
     "axios": "1.4.0",
     "bcryptjs": "2.4.3",
+    "chai": "4.3.8",
     "dotenv": "16.3.1",
     "express": "4.18.2",
     "jsonwebtoken": "9.0.1",
+    "mocha": "10.2.0",
     "mongoose": "7.4.3",
-    "nodemon": "3.0.1"
+    "nodemon": "3.0.1",
+    "supertest": "6.3.3"
+  },
+  "devDependencies": {
+    "chai-http": "4.4.0",
+    "cross-env": "7.0.3",
+    "mongodb-memory-server": "8.15.1"
   }
 }

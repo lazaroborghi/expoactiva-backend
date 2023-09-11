@@ -20,7 +20,12 @@ const locationSchema = new mongoose.Schema({
     time: {
         type: String,
         required:true
-    }
+    },
+    interests: [
+        {
+            type: String,
+        }
+    ]
 })
 
 export default mongoose.model('Location', locationSchema)

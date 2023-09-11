@@ -2,9 +2,11 @@ import express from "express";
 import {
     newLocation,
     getLocationsByDateTime,
-    getLocationsByDevice
+    getLocationsByDevice,
+    addInterests,
+    getLocationsByDateRange,
+    getLocationsByInterests
 } from "../controllers/locationController.js";
-
 
 const locationRouter = express.Router();
 
@@ -12,9 +14,18 @@ const locationRouter = express.Router();
 locationRouter.post("/", newLocation);
 
 // Obtener ubicaciones por fecha y hora
-locationRouter.get("/", getLocationsByDateTime);
+locationRouter.get("/datetime", getLocationsByDateTime);
 
 // Obtener ubicaciones por dispositivo
-locationRouter.get("/:deviceId", getLocationsByDevice);
+locationRouter.get("/device/:deviceId", getLocationsByDevice);
+
+// Añadir intereses a una ubicación existente
+locationRouter.put("/:id/interests", addInterests);
+
+// Obtener ubicaciones por un rango de fechas
+locationRouter.get("/daterange", getLocationsByDateRange);
+
+// Obtener ubicaciones por intereses
+locationRouter.get("/interests", getLocationsByInterests);
 
 export default locationRouter;
