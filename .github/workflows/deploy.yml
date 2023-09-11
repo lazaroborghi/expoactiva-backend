@@ -12,13 +12,24 @@ jobs:
     steps:
     - uses: actions/checkout@v2
 
-    - name: Use Node.js
+    - name: Setup Node.js
       uses: actions/setup-node@v1
       with:
         node-version: '18'
 
+    # Caching dependencies
+    - name: Cache de dependencias
+      uses: actions/cache@v2
+      with:
+        path: ~/.npm
+        key: ${{ runner.OS }}-node-${{ hashFiles('**/package-lock.json') }}
+        restore-keys: |
+          ${{ runner.OS }}-node-
+
     - name: Instalar dependencias
       run: npm install
+
+    # Correr linter para verificar errores en el código (por ahora no hay)
 
     - name: Correr tests
       run: npm test
@@ -35,7 +46,6 @@ jobs:
         gcloud config set project expoactiva-nacional-395522
 
     # Despliegue a Google App Engine
-    # Solo si los tests pasan, hace el despliegue.
     - name: Despliegue a Google App Engine
       if: success()
       env:
