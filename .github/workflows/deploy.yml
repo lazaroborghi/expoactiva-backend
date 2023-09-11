@@ -7,14 +7,12 @@ on:
 
 jobs:
   deploy:
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-20.04
     steps:
       - name: Cancelar builds redundantes anteriores
         uses: styfle/cancel-workflow-action@0.9.1
         with:
           access_token: ${{ secrets.GITHUB_TOKEN }}
-          workflow: 'Node.js CI/CD'
-          branch: 'main'
       
       - uses: actions/checkout@v2
 
