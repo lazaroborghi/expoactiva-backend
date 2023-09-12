@@ -1,6 +1,6 @@
 {
   "name": "expoactiva",
-  "version": "1.0.2",
+  "version": "1.0.3",
   "description": "Expoactiva Nacional App Backend",
   "main": "index.js",
   "type": "module",
