@@ -36,28 +36,30 @@ jobs:
           sudo apt-get update
           sudo apt-get install google-cloud-sdk
     
-      - name: 5- Establecer proyecto de Google Cloud
+      - name: 5- Autenticar con Google Cloud
+        env:
+          GCP_CREDENTIALS: ${{ secrets.GCP_CREDENTIALS }}
+        run: |
+          echo "$GCP_CREDENTIALS" | gcloud auth activate-service-account --key-file=-
+      
+      - name: 6- Establecer proyecto de Google Cloud
         run: |
           gcloud config set project expoactiva-nacional-395522
 
       # Captura la versión anterior antes del despliegue
-      - name: 6- Obtener versión anterior
+      - name: 7- Obtener versión anterior
         id: last-version
         run: |
           LAST_VERSION=$(gcloud app versions list --sort-by '~version.id' --limit 1 --format 'value(version.id)')
           echo "Last version is $LAST_VERSION"
           echo "LAST_VERSION=$LAST_VERSION" >> $GITHUB_ENV
 
-      - name: 7- Despliegue a Google App Engine
-        if: success()
-        env:
-          GCP_CREDENTIALS: ${{ secrets.GCP_CREDENTIALS }}
+      - name: 8- Despliegue a Google App Engine
         run: |
-          echo "$GCP_CREDENTIALS" | gcloud auth activate-service-account --key-file=-
           gcloud app deploy
 
       # Captura la nueva versión después del despliegue
-      - name: 8- Obtener nueva versión
+      - name: 9- Obtener nueva versión
         id: new-version
         run: |
           NEW_VERSION=$(gcloud app versions list --sort-by '~version.id' --limit 1 --format 'value(version.id)')
@@ -65,6 +67,6 @@ jobs:
           echo "NEW_VERSION=$NEW_VERSION" >> $GITHUB_ENV
 
       # Establece el tráfico
-      - name: 9- Establecer tráfico
+      - name: 10- Establecer tráfico
         run: |
           gcloud app services set-traffic default --splits $LAST_VERSION=0.8,$NEW_VERSION=0.2
