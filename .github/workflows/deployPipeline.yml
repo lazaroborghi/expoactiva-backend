@@ -36,14 +36,21 @@ jobs:
     runs-on: ubuntu-20.04
     steps:
     - uses: actions/checkout@v3
+
     - name: Setup Bun
       uses: oven-sh/setup-bun@v1
       with:
         bun-version: latest
+    
+    - name: Setup Node
+      uses: actions/setup-node@v3
+      with:
+        node-version: '18'
+    
     - name: Instalar dependencias
       run: bun install
     - name: Correr tests
-      run: bun test
+      run: npm test
 
   deploy:
     needs: [lint, test]
