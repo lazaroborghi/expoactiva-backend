@@ -29,11 +29,17 @@ jobs:
       with:
         bun-version: latest
     
+    - name: Setup Node
+      uses: actions/setup-node@v3
+      with:
+        node-version: '18'
+        cache: 'npm'
+    
     - name: Instalar dependencias
       run: bun install
 
     - name: Correr linter
-      run: bun run lint
+      run: npm run lint
 
   test:
     needs: avoid_redundant_builds
@@ -54,7 +60,7 @@ jobs:
     
     - name: Instalar dependencias
       run: bun install
-
+      
     - name: Correr tests
       run: npm test
 
