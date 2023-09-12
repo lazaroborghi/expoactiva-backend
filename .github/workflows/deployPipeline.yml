@@ -9,7 +9,6 @@ on:
     types: [opened, synchronize]
 
 jobs:
-  
   avoid_redundant_builds:
     runs-on: ubuntu-20.04
     steps:
@@ -51,16 +50,17 @@ jobs:
   deploy:
     needs: [lint, test]
     runs-on: ubuntu-20.04
+    container:
+      image: google/cloud-sdk:latest
     steps:
-    - uses: actions/checkout@v3
-    - name: Instalar Google Cloud SDK
-      run: sudo apt-get update && sudo apt-get install google-cloud-sdk
+    - name: Checkout repo
+      uses: actions/checkout@v3
     - name: Establecer proyecto de Google Cloud
       run: gcloud config set project expoactiva-nacional-395522
-    - name: Despliegue a Google App Engine
-      if: ${{ github.event_name == 'push' }}
+    - name: Autenticación con Google Cloud
+      run: echo "$GCP_CREDENTIALS" | gcloud auth activate-service-account --key-file=-
       env:
         GCP_CREDENTIALS: ${{ secrets.GCP_CREDENTIALS }}
-      run: |
-        echo "$GCP_CREDENTIALS" | gcloud auth activate-service-account --key-file=-
-        gcloud app deploy
+    - name: Despliegue a Google App Engine
+      if: ${{ github.event_name == 'push' }}
+      run: gcloud app deploy
