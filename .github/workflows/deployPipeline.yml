@@ -14,8 +14,7 @@ jobs:
         with:
           access_token: ${{ secrets.GITHUB_TOKEN }}
 
-  setup:
-    needs: cancel-redundant-jobs
+  build:
     runs-on: ubuntu-20.04
     steps:
       - uses: actions/checkout@v2
@@ -24,42 +23,45 @@ jobs:
         with:
           node-version: '18'
           cache: 'npm'
-
-  install-dependencies:
-    needs: setup
-    runs-on: ubuntu-20.04
-    steps:
-      - name: 1- Instalar dependencias
+      - name: Instalar dependencias
         run: npm install --no-audit --no-fund --no-optional
 
   lint:
-    needs: setup
+    needs: build
     runs-on: ubuntu-20.04
     steps:
-      - name: 2- Correr linter
+      - uses: actions/checkout@v2
+      - name: Setup Node.js
+        uses: actions/setup-node@v2
+        with:
+          node-version: '18'
+          cache: 'npm'
+      - name: Correr linter
         run: npm run lint
 
   test:
-    needs: setup
+    needs: build
     runs-on: ubuntu-20.04
     steps:
-      - name: 3- Correr tests
+      - uses: actions/checkout@v2
+      - name: Setup Node.js
+        uses: actions/setup-node@v2
+        with:
+          node-version: '18'
+          cache: 'npm'
+      - name: Correr tests
         run: npm test
 
-  gcloud-setup:
-    needs: [install-dependencies, lint, test]
-    runs-on: ubuntu-20.04
-    steps:
-      - name: 4- Instalar Google Cloud SDK
-        run: sudo apt-get update && sudo apt-get install google-cloud-sdk
-      - name: 5- Establecer proyecto de Google Cloud
-        run: gcloud config set project expoactiva-nacional-395522
-
   deploy:
-    needs: gcloud-setup
+    needs: [test, lint]
     runs-on: ubuntu-20.04
     steps:
-      - name: 6- Despliegue a Google App Engine
+      - uses: actions/checkout@v2
+      - name: Instalar Google Cloud SDK
+        run: sudo apt-get update && sudo apt-get install google-cloud-sdk
+      - name: Establecer proyecto de Google Cloud
+        run: gcloud config set project expoactiva-nacional-395522
+      - name: Despliegue a Google App Engine
         env:
           GCP_CREDENTIALS: ${{ secrets.GCP_CREDENTIALS }}
         run: |
