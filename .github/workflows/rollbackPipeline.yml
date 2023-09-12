@@ -1,4 +1,4 @@
-name: Rollback automatico
+name: Rollback automático
 
 on:
   workflow_dispatch: # permite ejecuciones manuales
@@ -25,13 +25,13 @@ jobs:
       run: |
         gcloud config set project expoactiva-nacional-395522
 
-    - name: Obtiene la ultima version desplegada
-      id: last-version
+    - name: Obtiene la segunda última versión desplegada
+      id: second-last-version
       run: |
-        LAST_VERSION=$(gcloud app versions list --sort-by '~version.id' --limit 1 --format 'value(version.id)')
-        echo "Last deployed version is $LAST_VERSION"
-        echo "::set-output name=version::$LAST_VERSION"
+        SECOND_LAST_VERSION=$(gcloud app versions list --sort-by '~version.id' --limit 2 --format 'value(version.id)' | tail -n1)
+        echo "Second last deployed version is $SECOND_LAST_VERSION"
+        echo "::set-output name=version::$SECOND_LAST_VERSION"
 
     - name: Inicia rollback
       run: |
-        gcloud app versions start ${{ steps.last-version.outputs.version }}
+        gcloud app versions start ${{ steps.second-last-version.outputs.version }}
