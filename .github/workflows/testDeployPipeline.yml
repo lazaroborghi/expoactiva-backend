@@ -6,67 +6,63 @@ on:
       - test
 
 jobs:
-  test-deploy:
+  avoid_redundant_builds:
     runs-on: ubuntu-20.04
     steps:
       - name: Cancelar builds redundantes anteriores
-        uses: styfle/cancel-workflow-action@0.9.1
+        uses: styfle/cancel-workflow-action@0.11.0
         with:
           access_token: ${{ secrets.GITHUB_TOKEN }}
-      
-      - uses: actions/checkout@v2
 
+  lint:
+    needs: avoid_redundant_builds
+    runs-on: ubuntu-20.04
+    steps:
+      - uses: actions/checkout@v3
       - name: Setup Node.js
-        uses: actions/setup-node@v2
+        uses: actions/setup-node@v3
         with:
           node-version: '18'
           cache: 'npm'
-
-      - name: 1- Instalar dependencias
+      - name: Instalar dependencias
         run: npm install --no-audit --no-fund --no-optional
-
-      - name: 2- Correr linter
+      - name: Correr linter
         run: npm run lint
 
-      - name: 3- Correr tests
+  test:
+    needs: avoid_redundant_builds
+    runs-on: ubuntu-20.04
+    steps:
+      - uses: actions/checkout@v3
+      - name: Setup Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: '18'
+          cache: 'npm'
+      - name: Instalar dependencias
+        run: npm install --no-audit --no-fund --no-optional
+      - name: Correr tests
         run: npm test
 
-      - name: 4- Instalar Google Cloud SDK
-        run: |
-          sudo apt-get update
-          sudo apt-get install google-cloud-sdk
-    
-      - name: 5- Autenticar con Google Cloud
+  deploy:
+    needs: [lint, test]
+    runs-on: ubuntu-20.04
+    container:
+      image: google/cloud-sdk:alpine
+    steps:
+      - uses: actions/checkout@v3
+      - name: Establecer proyecto de Google Cloud
+        run: gcloud config set project expoactiva-nacional-395522
+      - name: Autenticación con Google Cloud
+        run: echo "$GCP_CREDENTIALS" | gcloud auth activate-service-account --key-file=-
         env:
           GCP_CREDENTIALS: ${{ secrets.GCP_CREDENTIALS }}
-        run: |
-          echo "$GCP_CREDENTIALS" | gcloud auth activate-service-account --key-file=-
-      
-      - name: 6- Establecer proyecto de Google Cloud
-        run: |
-          gcloud config set project expoactiva-nacional-395522
-
-      # Captura la versión anterior antes del despliegue
-      - name: 7- Obtener versión anterior
-        id: last-version
-        run: |
-          LAST_VERSION=$(gcloud app versions list --sort-by '~version.id' --limit 1 --format 'value(version.id)')
-          echo "Last version is $LAST_VERSION"
-          echo "LAST_VERSION=$LAST_VERSION" >> $GITHUB_ENV
-
-      - name: 8- Despliegue a Google App Engine
-        run: |
-          gcloud app deploy
-
-      # Captura la nueva versión después del despliegue
-      - name: 9- Obtener nueva versión
-        id: new-version
+      - name: Despliegue a Google App Engine
+        run: gcloud app deploy
+      - name: Obtener nueva versión
         run: |
           NEW_VERSION=$(gcloud app versions list --sort-by '~version.id' --limit 1 --format 'value(version.id)')
-          echo "New version is $NEW_VERSION"
           echo "NEW_VERSION=$NEW_VERSION" >> $GITHUB_ENV
-
-      # Establece el tráfico
-      - name: 10- Establecer tráfico
+      - name: Establecer tráfico
         run: |
           gcloud app services set-traffic default --splits $LAST_VERSION=0.8,$NEW_VERSION=0.2
