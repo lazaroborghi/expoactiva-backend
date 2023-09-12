@@ -1,12 +1,12 @@
-name: Prod CI/CD
+name: Test CI/CD
 
 on:
   push:
     branches:
-      - main
+      - test
 
 jobs:
-  prod-deploy:
+  test-deploy:
     runs-on: ubuntu-20.04
     steps:
       - name: Cancelar builds redundantes anteriores
@@ -52,3 +52,16 @@ jobs:
         run: |
           echo "$GCP_CREDENTIALS" | gcloud auth activate-service-account --key-file=-
           gcloud app deploy
+
+      # Obtener la versión recién desplegada
+      - name: 7- Obtener nueva versión
+        id: new-version
+        run: |
+          NEW_VERSION=$(gcloud app versions list --sort-by '~version.id' --limit 1 --format 'value(version.id)')
+          echo "New version is $NEW_VERSION"
+          echo "NEW_VERSION=$NEW_VERSION" >> $GITHUB_ENV
+
+      # Establecer tráfico
+      - name: 8- Establecer tráfico
+        run: |
+          gcloud app services set-traffic default --splits $NEW_VERSION=0.2
