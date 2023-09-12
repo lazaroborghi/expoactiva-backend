@@ -24,7 +24,7 @@ app.use('/auth', authRouter);
 //app.use(authenticateJWT);  // Middleware para verificar JWT (se encuentra en src\middleware\authMiddleware.js (POR AHORA DESACTIVADO)
 
 // Rutas
-app.use('/locations', locationRouter);
+app.use('/locations', locationRouter)
 app.use('/events', eventRouter);
 
 // Iniciar el servidor
