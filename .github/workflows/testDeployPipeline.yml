@@ -25,27 +25,30 @@ jobs:
       - name: 1- Instalar dependencias
         run: npm install --no-audit --no-fund --no-optional
 
-      # Correr linter para verificar errores en el código (por ahora no hay)
       - name: 2- Correr linter
         run: npm run lint
 
-      # Correr tests
       - name: 3- Correr tests
         run: npm test
 
-      # Instalar el SDK de Google Cloud
       - name: 4- Instalar Google Cloud SDK
         run: |
           sudo apt-get update
           sudo apt-get install google-cloud-sdk
     
-      # Establecer proyecto de Google Cloud
       - name: 5- Establecer proyecto de Google Cloud
         run: |
           gcloud config set project expoactiva-nacional-395522
 
-      # Despliegue a Google App Engine
-      - name: 6- Despliegue a Google App Engine
+      # Captura la versión anterior antes del despliegue
+      - name: 6- Obtener versión anterior
+        id: last-version
+        run: |
+          LAST_VERSION=$(gcloud app versions list --sort-by '~version.id' --limit 1 --format 'value(version.id)')
+          echo "Last version is $LAST_VERSION"
+          echo "LAST_VERSION=$LAST_VERSION" >> $GITHUB_ENV
+
+      - name: 7- Despliegue a Google App Engine
         if: success()
         env:
           GCP_CREDENTIALS: ${{ secrets.GCP_CREDENTIALS }}
@@ -53,15 +56,15 @@ jobs:
           echo "$GCP_CREDENTIALS" | gcloud auth activate-service-account --key-file=-
           gcloud app deploy
 
-      # Obtener la versión recién desplegada
-      - name: 7- Obtener nueva versión
+      # Captura la nueva versión después del despliegue
+      - name: 8- Obtener nueva versión
         id: new-version
         run: |
           NEW_VERSION=$(gcloud app versions list --sort-by '~version.id' --limit 1 --format 'value(version.id)')
           echo "New version is $NEW_VERSION"
           echo "NEW_VERSION=$NEW_VERSION" >> $GITHUB_ENV
 
-      # Establecer tráfico
-      - name: 8- Establecer tráfico
+      # Establece el tráfico
+      - name: 9- Establecer tráfico
         run: |
-          gcloud app services set-traffic default --splits $NEW_VERSION=0.2
+          gcloud app services set-traffic default --splits $LAST_VERSION=0.8,$NEW_VERSION=0.2
