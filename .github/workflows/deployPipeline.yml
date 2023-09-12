@@ -4,9 +4,13 @@ on:
   push:
     branches:
       - main
+  pull_request:
+    branches: [main]
+    types: [opened, synchronize]
 
 jobs:
-  cancel-redundant-jobs:
+
+  avoid_redundancy:
     runs-on: ubuntu-20.04
     steps:
       - name: Cancelar builds redundantes anteriores
@@ -25,43 +29,57 @@ jobs:
           cache: 'npm'
       - name: Instalar dependencias
         run: npm install --no-audit --no-fund --no-optional
+      - name: Guardar node_modules como artefacto
+        uses: actions/upload-artifact@v3
+        with:
+          name: node_modules
+          path: node_modules
 
   lint:
-    needs: build
+    needs: [build]
     runs-on: ubuntu-20.04
     steps:
       - uses: actions/checkout@v2
-      - name: Setup Node.js
-        uses: actions/setup-node@v2
+      - name: Descargar node_modules
+        uses: actions/download-artifact@v3
         with:
-          node-version: '18'
-          cache: 'npm'
+          name: node_modules
+          path: node_modules
       - name: Correr linter
         run: npm run lint
 
   test:
-    needs: build
+    needs: [build]
     runs-on: ubuntu-20.04
     steps:
       - uses: actions/checkout@v2
-      - name: Setup Node.js
-        uses: actions/setup-node@v2
+      - name: Descargar node_modules
+        uses: actions/download-artifact@v3
         with:
-          node-version: '18'
-          cache: 'npm'
+          name: node_modules
+          path: node_modules
       - name: Correr tests
         run: npm test
 
   deploy:
-    needs: [test, lint]
+    needs: [lint, test]
     runs-on: ubuntu-20.04
     steps:
       - uses: actions/checkout@v2
+      - name: Descargar node_modules
+        uses: actions/download-artifact@v3
+        with:
+          name: node_modules
+          path: node_modules
       - name: Instalar Google Cloud SDK
-        run: sudo apt-get update && sudo apt-get install google-cloud-sdk
+        run: |
+          sudo apt-get update
+          sudo apt-get install google-cloud-sdk
       - name: Establecer proyecto de Google Cloud
-        run: gcloud config set project expoactiva-nacional-395522
+        run: |
+          gcloud config set project expoactiva-nacional-395522
       - name: Despliegue a Google App Engine
+        if: success()
         env:
           GCP_CREDENTIALS: ${{ secrets.GCP_CREDENTIALS }}
         run: |
