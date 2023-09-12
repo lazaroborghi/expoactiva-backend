@@ -10,7 +10,7 @@ on:
 
 jobs:
   
-  cancel_redundant_jobs:
+  avoid_redundant_builds:
     runs-on: ubuntu-20.04
     steps:
     - name: Cancelar builds redundantes anteriores
@@ -18,17 +18,8 @@ jobs:
       with:
         access_token: ${{ secrets.GITHUB_TOKEN }}
 
-  build:
-    runs-on: ubuntu-20.04
-    steps:
-    - uses: actions/checkout@v2
-    - name: Setup Node.js
-      uses: actions/setup-node@v2
-      with:
-        node-version: '18'
-
   lint:
-    needs: build
+    needs: avoid_redundant_builds
     runs-on: ubuntu-20.04
     steps:
     - uses: actions/checkout@v2
@@ -43,7 +34,7 @@ jobs:
       run: npm run lint
 
   test:
-    needs: build
+    needs: [avoid_redundant_builds, lint]
     runs-on: ubuntu-20.04
     steps:
     - uses: actions/checkout@v2
