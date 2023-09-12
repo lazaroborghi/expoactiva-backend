@@ -6,47 +6,60 @@ on:
       - main
 
 jobs:
-  prod-deploy:
+  cancel-redundant-jobs:
     runs-on: ubuntu-20.04
     steps:
       - name: Cancelar builds redundantes anteriores
         uses: styfle/cancel-workflow-action@0.9.1
         with:
           access_token: ${{ secrets.GITHUB_TOKEN }}
-      
-      - uses: actions/checkout@v2
 
+  setup:
+    needs: cancel-redundant-jobs
+    runs-on: ubuntu-20.04
+    steps:
+      - uses: actions/checkout@v2
       - name: Setup Node.js
         uses: actions/setup-node@v2
         with:
           node-version: '18'
           cache: 'npm'
 
+  install-dependencies:
+    needs: setup
+    runs-on: ubuntu-20.04
+    steps:
       - name: 1- Instalar dependencias
         run: npm install --no-audit --no-fund --no-optional
 
-      # Correr linter para verificar errores en el código (por ahora no hay)
+  lint:
+    needs: setup
+    runs-on: ubuntu-20.04
+    steps:
       - name: 2- Correr linter
         run: npm run lint
 
-      # Correr tests
+  test:
+    needs: setup
+    runs-on: ubuntu-20.04
+    steps:
       - name: 3- Correr tests
         run: npm test
 
-      # Instalar el SDK de Google Cloud
+  gcloud-setup:
+    needs: [install-dependencies, lint, test]
+    runs-on: ubuntu-20.04
+    steps:
       - name: 4- Instalar Google Cloud SDK
-        run: |
-          sudo apt-get update
-          sudo apt-get install google-cloud-sdk
-    
-      # Establecer proyecto de Google Cloud
+        run: sudo apt-get update && sudo apt-get install google-cloud-sdk
       - name: 5- Establecer proyecto de Google Cloud
-        run: |
-          gcloud config set project expoactiva-nacional-395522
+        run: gcloud config set project expoactiva-nacional-395522
 
-      # Despliegue a Google App Engine
+  deploy:
+    needs: gcloud-setup
+    runs-on: ubuntu-20.04
+    steps:
       - name: 6- Despliegue a Google App Engine
-        if: success()
         env:
           GCP_CREDENTIALS: ${{ secrets.GCP_CREDENTIALS }}
         run: |
