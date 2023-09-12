@@ -22,30 +22,28 @@ jobs:
     runs-on: ubuntu-20.04
     steps:
     - uses: actions/checkout@v3
-    - name: Setup Node.js
-      uses: actions/setup-node@v3
+    - name: Setup Bun
+      uses: oven-sh/setup-bun@v1
       with:
-        node-version: '18'
-        cache: 'npm'
+        bun-version: latest
     - name: Instalar dependencias
-      run: npm install --no-audit --no-fund --no-optional
+      run: bun install
     - name: Correr linter
-      run: npm run lint
+      run: bun run lint
 
   test:
     needs: avoid_redundant_builds
     runs-on: ubuntu-20.04
     steps:
     - uses: actions/checkout@v3
-    - name: Setup Node.js
-      uses: actions/setup-node@v3
+    - name: Setup Bun
+      uses: oven-sh/setup-bun@v1
       with:
-        node-version: '18'
-        cache: 'npm'
+        bun-version: latest
     - name: Instalar dependencias
-      run: npm install --no-audit --no-fund --no-optional
+      run: bun install
     - name: Correr tests
-      run: npm test
+      run: bun test
 
   deploy:
     needs: [lint, test]
