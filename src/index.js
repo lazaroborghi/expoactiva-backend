@@ -1,10 +1,10 @@
-import express from "express";
+import express from 'express';
 
-import database from "./config/database.js";
-import authenticateJWT from "./middleware/authMiddleware.js";
-import locationRouter from "./routes/locationRoutes.js";
-import eventRouter from "./routes/eventRoutes.js";
-import authRouter from "./routes/authRoutes.js";
+import database from './config/database.js';
+//import authenticateJWT from './middleware/authMiddleware.js';
+import locationRouter from './routes/locationRoutes.js';
+import eventRouter from './routes/eventRoutes.js';
+import authRouter from './routes/authRoutes.js';
 import dotenv from 'dotenv';
 
 dotenv.config();
@@ -19,12 +19,12 @@ const app = express();
 app.use(express.json()); // Permite recibir JSON en el body de las peticiones
 
 // Rutas de autenticación
-app.use("/auth", authRouter);
+app.use('/auth', authRouter);
 
 //app.use(authenticateJWT);  // Middleware para verificar JWT (se encuentra en src\middleware\authMiddleware.js (POR AHORA DESACTIVADO)
 
 // Rutas
-app.use("/locations", locationRouter);
+app.use('/locations', locationRouter);
 app.use('/events', eventRouter);
 
 // Iniciar el servidor

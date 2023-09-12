@@ -6,7 +6,7 @@ import { getSecret } from "../utils/secretManager.js";
 
 const authRouter = express.Router();
 
-const WEB_CLIENT_ID = await getSecret('WEB_CLIENT_ID'); // Obtén el webClientId desde tu secret manager
+const WEB_CLIENT_ID = getSecret('WEB_CLIENT_ID');
 
 const oAuth2Client = new OAuth2Client(WEB_CLIENT_ID); // Usamos un único cliente ahora
 
@@ -24,7 +24,6 @@ authRouter.post('/google', async (req, res) => {
         });
         
         const payload = ticket.getPayload();
-        console.log("payload",payload)
 
         // Autentica y crea/encuentra al usuario
         const user = await UserServices.findOrCreateUser(payload);
@@ -34,7 +33,6 @@ authRouter.post('/google', async (req, res) => {
         const secretKey = await getSecret('KEY');
         const token = await createToken(jwtPayload, secretKey);
         
-        console.log("jwtToken",token)
         res.json({ token, user: user });
 
     } catch (error) {

@@ -17,7 +17,7 @@ jobs:
       - uses: actions/checkout@v2
 
       - name: Setup Node.js
-        uses: actions/setup-node@v1
+        uses: actions/setup-node@v2
         with:
           node-version: '18'
           cache: 'npm'
@@ -26,24 +26,26 @@ jobs:
         run: npm install --no-audit --no-fund --no-optional
 
       # Correr linter para verificar errores en el código (por ahora no hay)
+      - name: 2- Correr linter
+        run: npm run lint
 
       # Correr tests
-      - name: 2- Correr tests
+      - name: 3- Correr tests
         run: npm test
 
       # Instalar el SDK de Google Cloud
-      - name: 3- Instalar Google Cloud SDK
+      - name: 4- Instalar Google Cloud SDK
         run: |
           sudo apt-get update
           sudo apt-get install google-cloud-sdk
     
       # Establecer proyecto de Google Cloud
-      - name: 4- Establecer proyecto de Google Cloud
+      - name: 5- Establecer proyecto de Google Cloud
         run: |
           gcloud config set project expoactiva-nacional-395522
 
       # Despliegue a Google App Engine
-      - name: 5- Despliegue a Google App Engine
+      - name: 6- Despliegue a Google App Engine
         if: success()
         env:
           GCP_CREDENTIALS: ${{ secrets.GCP_CREDENTIALS }}

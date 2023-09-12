@@ -112,7 +112,7 @@ describe('Locations API', () => {
     // Prueba para obtener ubicaciones por un rango de fechas no válido
     it('should return 400 for an invalid date range', done => {
         chai.request(app)
-            .get(`/locations/daterange?startDate=invalidDate&endDate=anotherInvalidDate`)
+            .get('/locations/daterange?startDate=invalidDate&endDate=anotherInvalidDate')
             .end((err, res) => {
                 expect(res).to.have.status(400);
                 done();
@@ -122,7 +122,7 @@ describe('Locations API', () => {
     // Prueba para añadir intereses a una ubicación no existente
     it('should return 404 when adding interests to a non-existing location', done => {
         chai.request(app)
-            .put(`/locations/999999999999/interests`)
+            .put('/locations/999999999999/interests')
             .send({ interests: ['Swimming', 'Reading'] })
             .end((err, res) => {
                 expect(res).to.have.status(404);

@@ -13,7 +13,7 @@ export const findOrCreateLocalUser = async (payload) => {
                 picture: payload.picture
             });
             
-            console.log(user)
+            console.log(user);
             
             await user.save();
         }
@@ -23,4 +23,4 @@ export const findOrCreateLocalUser = async (payload) => {
         console.error("Error al buscar o crear el usuario:", error.message);
         throw error;
     }
-}
+};

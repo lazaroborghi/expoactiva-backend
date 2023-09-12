@@ -26,6 +26,6 @@ const locationSchema = new mongoose.Schema({
             type: String,
         }
     ]
-})
+});
 
-export default mongoose.model('Location', locationSchema)
+export default mongoose.model('Location', locationSchema);

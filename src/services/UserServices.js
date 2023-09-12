@@ -1,7 +1,7 @@
-import axios from "axios";
+//import axios from "axios";
 import { findOrCreateLocalUser } from "../controllers/userController.js";
 
-const API_URL = "https://moshi-moshi.herokuapp.com/api";
+//const API_URL = "https://moshi-moshi.herokuapp.com/api";
 
 class UserServices {
     
@@ -13,8 +13,8 @@ class UserServices {
         //} catch (error) {
         //    console.error("Error al comunicarse con servicio Moshi Moshi. Utilizando método local.", error);
 
-            // Si hay un error al comunicarse con Moshi Moshi, cae de nuevo en el método local.
-            return findOrCreateLocalUser(profile);
+        // Si hay un error al comunicarse con Moshi Moshi, cae de nuevo en el método local.
+        return findOrCreateLocalUser(profile);
         //}     
     }
 
