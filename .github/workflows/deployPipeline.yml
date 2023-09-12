@@ -22,9 +22,9 @@ jobs:
     needs: avoid_redundant_builds
     runs-on: ubuntu-20.04
     steps:
-    - uses: actions/checkout@v2
+    - uses: actions/checkout@v3
     - name: Setup Node.js
-      uses: actions/setup-node@v2
+      uses: actions/setup-node@v3
       with:
         node-version: '18'
         cache: 'npm'
@@ -34,12 +34,12 @@ jobs:
       run: npm run lint
 
   test:
-    needs: [avoid_redundant_builds, lint]
+    needs: avoid_redundant_builds
     runs-on: ubuntu-20.04
     steps:
-    - uses: actions/checkout@v2
+    - uses: actions/checkout@v3
     - name: Setup Node.js
-      uses: actions/setup-node@v2
+      uses: actions/setup-node@v3
       with:
         node-version: '18'
         cache: 'npm'
@@ -52,7 +52,7 @@ jobs:
     needs: [lint, test]
     runs-on: ubuntu-20.04
     steps:
-    - uses: actions/checkout@v2
+    - uses: actions/checkout@v3
     - name: Instalar Google Cloud SDK
       run: sudo apt-get update && sudo apt-get install google-cloud-sdk
     - name: Establecer proyecto de Google Cloud
