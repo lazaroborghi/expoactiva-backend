@@ -9,79 +9,67 @@ on:
     types: [opened, synchronize]
 
 jobs:
-
-  avoid_redundancy:
+  
+  cancel_redundant_jobs:
     runs-on: ubuntu-20.04
     steps:
-      - name: Cancelar builds redundantes anteriores
-        uses: styfle/cancel-workflow-action@0.9.1
-        with:
-          access_token: ${{ secrets.GITHUB_TOKEN }}
+    - name: Cancelar builds redundantes anteriores
+      uses: styfle/cancel-workflow-action@0.9.1
+      with:
+        access_token: ${{ secrets.GITHUB_TOKEN }}
 
   build:
     runs-on: ubuntu-20.04
     steps:
-      - uses: actions/checkout@v2
-      - name: Setup Node.js
-        uses: actions/setup-node@v2
-        with:
-          node-version: '18'
-          cache: 'npm'
-      - name: Instalar dependencias
-        run: npm install --no-audit --no-fund --no-optional
-      - name: Guardar node_modules como artefacto
-        uses: actions/upload-artifact@v3
-        with:
-          name: node_modules
-          path: node_modules
+    - uses: actions/checkout@v2
+    - name: Setup Node.js
+      uses: actions/setup-node@v2
+      with:
+        node-version: '18'
 
   lint:
-    needs: [build]
+    needs: build
     runs-on: ubuntu-20.04
     steps:
-      - uses: actions/checkout@v2
-      - name: Descargar node_modules
-        uses: actions/download-artifact@v3
-        with:
-          name: node_modules
-          path: node_modules
-      - name: Correr linter
-        run: npm run lint
+    - uses: actions/checkout@v2
+    - name: Setup Node.js
+      uses: actions/setup-node@v2
+      with:
+        node-version: '18'
+        cache: 'npm'
+    - name: Instalar dependencias
+      run: npm install --no-audit --no-fund --no-optional
+    - name: Correr linter
+      run: npm run lint
 
   test:
-    needs: [build]
+    needs: build
     runs-on: ubuntu-20.04
     steps:
-      - uses: actions/checkout@v2
-      - name: Descargar node_modules
-        uses: actions/download-artifact@v3
-        with:
-          name: node_modules
-          path: node_modules
-      - name: Correr tests
-        run: npm test
+    - uses: actions/checkout@v2
+    - name: Setup Node.js
+      uses: actions/setup-node@v2
+      with:
+        node-version: '18'
+        cache: 'npm'
+    - name: Instalar dependencias
+      run: npm install --no-audit --no-fund --no-optional
+    - name: Correr tests
+      run: npm test
 
   deploy:
     needs: [lint, test]
     runs-on: ubuntu-20.04
     steps:
-      - uses: actions/checkout@v2
-      - name: Descargar node_modules
-        uses: actions/download-artifact@v3
-        with:
-          name: node_modules
-          path: node_modules
-      - name: Instalar Google Cloud SDK
-        run: |
-          sudo apt-get update
-          sudo apt-get install google-cloud-sdk
-      - name: Establecer proyecto de Google Cloud
-        run: |
-          gcloud config set project expoactiva-nacional-395522
-      - name: Despliegue a Google App Engine
-        if: success()
-        env:
-          GCP_CREDENTIALS: ${{ secrets.GCP_CREDENTIALS }}
-        run: |
-          echo "$GCP_CREDENTIALS" | gcloud auth activate-service-account --key-file=-
-          gcloud app deploy
+    - uses: actions/checkout@v2
+    - name: Instalar Google Cloud SDK
+      run: sudo apt-get update && sudo apt-get install google-cloud-sdk
+    - name: Establecer proyecto de Google Cloud
+      run: gcloud config set project expoactiva-nacional-395522
+    - name: Despliegue a Google App Engine
+      if: ${{ github.event_name == 'push' }}
+      env:
+        GCP_CREDENTIALS: ${{ secrets.GCP_CREDENTIALS }}
+      run: |
+        echo "$GCP_CREDENTIALS" | gcloud auth activate-service-account --key-file=-
+        gcloud app deploy
