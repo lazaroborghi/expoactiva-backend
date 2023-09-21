@@ -5,7 +5,7 @@
 
 *PASO 1:* 
 
-Crear nueva carpeta y inicializar repositorio -> git init
+Crear nueva carpeta e inicializar repositorio -> git init
 
 *PASO 2:* 
 
