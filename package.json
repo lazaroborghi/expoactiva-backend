@@ -6,7 +6,7 @@
   "type": "module",
   "scripts": {
     "start": "node src/index.js",
-    "dev": "cross-env NODE_ENV=development nodemon --watch src --ext js src/index.js",
+    "dev": "cross-env NODE_ENV=development nodemon --legacy-watch src --ext js src/index.js",
     "test": "cross-env NODE_ENV=test mocha src/tests//*.test.js --exit",
     "lint": "eslint src/**/*.js src/index.js --debug"
   },
