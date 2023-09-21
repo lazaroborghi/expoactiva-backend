@@ -140,4 +140,43 @@ describe('Locations API', () => {
                 done();
             });
     });
+
+    // Prueba para errores de validación al crear una nueva ubicación
+    it('should return 400 for validation failures', done => {
+        chai.request(app)
+            .post('/locations')
+            .send({
+                longitude: 'invalid',
+                latitude: 'invalid'
+            })
+            .end((err, res) => {
+                expect(res).to.have.status(400);
+                done();
+            });
+    });
+
+    // Prueba para actualizar una ubicación con un ID no existente
+    it('should return 404 for updating a non-existing location', done => {
+        chai.request(app)
+            .put('/locations/999999999999')
+            .send({
+                longitude: 11.11,
+                latitude: 22.22
+            })
+            .end((err, res) => {
+                expect(res).to.have.status(404);
+                done();
+            });
+    });
+
+    // Prueba para eliminar una ubicación con un ID no existente
+    it('should return 404 for deleting a non-existing location', done => {
+        chai.request(app)
+            .delete('/locations/999999999999')
+            .end((err, res) => {
+                expect(res).to.have.status(404);
+                done();
+            });
+    });
+
 });
