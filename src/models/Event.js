@@ -1,28 +1,40 @@
 import mongoose from 'mongoose';
 
 const eventSchema = new mongoose.Schema({
-    title: {
+    eventName: {
         type: String,
         required: true,
         trim: true
     },
     description: {
         type: String,
-        required: true,
+        required: false,
         trim: true
     },
-    date: {
+    dateHourStart: {
         type: Date,
         required: true
     },
-    expositor: {
+    dateHourEnd: {	
+        type: Date,
+        required: true
+    },
+    type: {
         type: String,
-        required: true,
+        required: false,
         trim: true
     },
-    image: {
-        data: Buffer,
-        contentType: String
+    idPerson: {
+        type: Number,
+        required: false,
+    },
+    person: {
+        type: Number,
+        required: false,
+    },
+    picture: {
+        type: String,
+        required: false,
     }
 });
 
