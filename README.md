@@ -5,12 +5,16 @@
 
 *PASO 1:* 
 
+Crear nueva carpeta e inicializar repositorio -> git init
+
+*PASO 2:* 
+
 Clonar el repositorio -> git clone https://github.com/lazaroborghi/expoactiva-backend.git
-
-*PASO 2:*
-
-Acceder a la ruta -> ./expoactiva-backend (por terminal).
 
 *PASO 3:*
 
-Ejecutar comando -> docker compose up --build (Se debe tener docker y docker compose instalado)
+Acceder a la ruta -> ./expoactiva-backend (por terminal).
+
+*PASO 4:*
+
+Ejecutar comando -> docker compose up --build (Se debe tener docker y docker compose instalado y corriendo)
