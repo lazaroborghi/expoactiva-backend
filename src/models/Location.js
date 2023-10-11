@@ -3,23 +3,23 @@ import mongoose from "mongoose";
 const locationSchema = new mongoose.Schema({
     deviceId: {
         type: String,
-        required: true
+        required: false
     },
     longitude: {
         type: Number,
-        required: true
+        required: false
     },
     latitude: {
         type: Number,
-        required: true
+        required: false
     },
     date: {
         type: Date,
-        required: true
+        required: false
     },
     time: {
         type: String,
-        required:true
+        required:false
     },
     interests: [
         {
