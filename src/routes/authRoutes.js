@@ -19,13 +19,17 @@ authRouter.post('/google', async (req, res) => {
 
     const CLIENT = platform === 'android' ? WEB_CLIENT_ID : IOS_CLIENT_ID;
 
+    console.log('WEB_CLIENT_ID',WEB_CLIENT_ID);
+    console.log('IOS_CLIENT_ID',IOS_CLIENT_ID);
+    console.log('CLIENT',CLIENT);
+
     const oAuth2Client = new OAuth2Client(CLIENT);
 
     try {
         console.log('tokenId',tokenId);
         console.log('platform',platform);
 
-        const ticket = await oAuth2Client.verifyIdToken({
+        const ticket = oAuth2Client.verifyIdToken({
             idToken: tokenId,
             audience: CLIENT, // Verificamos usando el client ID correspondiente
         });
