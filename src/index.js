@@ -21,7 +21,7 @@ app.use(express.json()); // Permite recibir JSON en el body de las peticiones
 // Rutas de autenticación
 app.use('/auth', authRouter);
 
-//app.use(authenticateJWT);  // Middleware para verificar JWT (se encuentra en src\middleware\authMiddleware.js (POR AHORA DESACTIVADO)
+app.use(authenticateJWT);  // Middleware para verificar JWT (se encuentra en src\middleware\authMiddleware.js
 
 // Rutas
 app.use('/locations', locationRouter);
