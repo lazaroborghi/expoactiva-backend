@@ -1,7 +1,7 @@
 import express from 'express';
 
 import database from './config/database.js';
-//import authenticateJWT from './middleware/authMiddleware.js';
+import authenticateJWT from './middleware/authMiddleware.js';
 import locationRouter from './routes/locationRoutes.js';
 import eventRouter from './routes/eventRoutes.js';
 import authRouter from './routes/authRoutes.js';
