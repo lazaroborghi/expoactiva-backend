@@ -16,9 +16,9 @@ async function getSecrets() {
     const secrets = {
         WEB_CLIENT_ID,
         IOS_CLIENT_ID
-    }
+    };
 
-    return secrets
+    return secrets;
 
 }
 
