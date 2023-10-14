@@ -6,8 +6,21 @@ import { getSecret } from "../utils/secretManager.js";
 
 const authRouter = express.Router();
 
-const WEB_CLIENT_ID = getSecret('WEB_CLIENT_ID');
-const IOS_CLIENT_ID = getSecret('IOS_CLIENT_ID');
+async function getSecrets() {
+    
+    const [WEB_CLIENT_ID, IOS_CLIENT_ID] = await Promise.all([
+        getSecret('WEB_CLIENT_ID'),
+        getSecret('IOS_CLIENT_ID')
+    ]);
+
+    const secrets = {
+        WEB_CLIENT_ID,
+        IOS_CLIENT_ID
+    }
+
+    return secrets
+
+}
 
 const createToken = async (payload, secretKey) => {
     return jwt.sign(payload, secretKey, { expiresIn: '48h' });
@@ -16,6 +29,8 @@ const createToken = async (payload, secretKey) => {
 authRouter.post('/google', async (req, res) => {
     const tokenId = req.body.tokenId; // El token ID enviado desde la aplicación móvil
     const platform = req.body.platform; // La plataforma desde la que se está autenticando el usuario
+
+    const { WEB_CLIENT_ID, IOS_CLIENT_ID } = await getSecrets();
 
     const CLIENT = platform === 'android' ? WEB_CLIENT_ID : IOS_CLIENT_ID;
 
@@ -29,7 +44,7 @@ authRouter.post('/google', async (req, res) => {
         console.log('tokenId',tokenId);
         console.log('platform',platform);
 
-        const ticket = oAuth2Client.verifyIdToken({
+        const ticket = await oAuth2Client.verifyIdToken({
             idToken: tokenId,
             audience: CLIENT, // Verificamos usando el client ID correspondiente
         });
