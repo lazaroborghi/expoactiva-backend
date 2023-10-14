@@ -17,7 +17,7 @@ authRouter.post('/google', async (req, res) => {
     const tokenId = req.body.tokenId; // El token ID enviado desde la aplicación móvil
     const platform = req.body.platform; // La plataforma desde la que se está autenticando el usuario
 
-    CLIENT = platform === 'android' ? WEB_CLIENT_ID : IOS_CLIENT_ID
+    const CLIENT = platform === 'android' ? WEB_CLIENT_ID : IOS_CLIENT_ID;
 
     const oAuth2Client = new OAuth2Client(CLIENT);
 
