@@ -10,11 +10,11 @@ const exhibitorScheme = new mongoose.Schema({
         required: false,
     },
     image: {
-        type: Buffer,
+        type: String,
         required: false,
     },
     logo:{
-        type:Buffer,
+        type:String,
         required:false,
     },
     description:{
@@ -34,11 +34,11 @@ const exhibitorScheme = new mongoose.Schema({
         required:false
     },
     longitude: {
-        type: Number,
+        type: String,
         required: true,
     },
     latitude: {
-        type: Number,
+        type: String,
         required: true,
     },
 });

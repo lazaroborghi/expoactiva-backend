@@ -1,5 +1,5 @@
 import express from 'express';
-import { createExhibitor, getExhibitorById, getAllExhibitors, deleteExhibitorById } from '../controllers/exhibitorController.js';
+import { createExhibitor, getExhibitorById, getAllExhibitors, deleteExhibitorById, deleteAll } from '../controllers/exhibitorController.js';
 
 const exhibitorRouter = express.Router();
 
@@ -14,5 +14,7 @@ exhibitorRouter.get('/', getAllExhibitors);
 
 // Ruta para  borrar expositor
 exhibitorRouter.delete('/', deleteExhibitorById);
+
+exhibitorRouter.delete('/deleteAll', deleteAll);
 
 export default exhibitorRouter;
