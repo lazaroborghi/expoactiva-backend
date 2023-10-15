@@ -6,6 +6,7 @@ import locationRouter from './routes/locationRoutes.js';
 import eventRouter from './routes/eventRoutes.js';
 import authRouter from './routes/authRoutes.js';
 import dotenv from 'dotenv';
+import exhibitorRouter from './routes/exhibitorRoutes.js';
 
 dotenv.config();
 
@@ -21,11 +22,15 @@ app.use(express.json()); // Permite recibir JSON en el body de las peticiones
 // Rutas de autenticación
 app.use('/auth', authRouter);
 
+app.use('/events', eventRouter);
+app.use('/exhibitors', exhibitorRouter);
+
 app.use(authenticateJWT);  // Middleware para verificar JWT (se encuentra en src\middleware\authMiddleware.js
 
 // Rutas
 app.use('/locations', locationRouter);
 app.use('/events', eventRouter);
+app.use('/exhibitors', exhibitorRouter);
 
 // Iniciar el servidor
 const PORT = process.env.PORT || 3000;
