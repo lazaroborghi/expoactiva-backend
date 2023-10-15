@@ -12,7 +12,7 @@ dotenv.config();
 
 // Conectarse a la base de datos
 if (process.env.NODE_ENV !== "test") {
-  database.connect();
+    database.connect();
 }
 const app = express();
 
@@ -33,7 +33,7 @@ app.use("/events", eventRouter);
 // Iniciar el servidor
 const PORT = process.env.PORT || 3000;
 app.listen(PORT, () => {
-  console.log(`Server is running on port ${PORT}.`);
+    console.log(`Server is running on port ${PORT}.`);
 });
 
 export default app;
