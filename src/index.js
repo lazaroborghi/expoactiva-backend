@@ -24,7 +24,7 @@ app.use("/auth", authRouter);
 
 app.use("/exhibitors", exhibitorRouter);
 
-app.use(authenticateJWT); // Middleware para verificar JWT (se encuentra en src\middleware\authMiddleware.js
+//app.use(authenticateJWT); // Middleware para verificar JWT (se encuentra en src\middleware\authMiddleware.js
 
 // Rutas
 app.use("/locations", locationRouter);

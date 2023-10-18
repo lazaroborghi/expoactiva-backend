@@ -1,6 +1,5 @@
 import User from '../models/User.js';
 
-// Busca o crea el usuario en la dbMongo cuando no se encuentra de la api de moshi moshi
 export const findOrCreateLocalUser = async (payload) => {
     try {
         let user = await User.findOne({ email: payload.email });
