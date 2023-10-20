@@ -7,6 +7,7 @@ import locationRouter from "./routes/locationRoutes.js";
 import authRouter from "./routes/authRoutes.js";
 import dotenv from "dotenv";
 import exhibitorRouter from "./routes/exhibitorRoutes.js";
+import favouriteRouter from "./routes/favouriteRoutes.js";
 
 dotenv.config();
 
@@ -22,14 +23,14 @@ app.use(express.json()); // Permite recibir JSON en el body de las peticiones
 // Rutas de autenticación
 app.use("/auth", authRouter);
 
-app.use("/exhibitors", exhibitorRouter);
-
 //app.use(authenticateJWT); // Middleware para verificar JWT (se encuentra en src\middleware\authMiddleware.js
 
 //app.use(authMoshi); // Middleware para verificar token de moshi moshi
 
 // Rutas
 app.use("/locations", locationRouter);
+app.use("/exhibitors", exhibitorRouter);
+app.use("/favourites", favouriteRouter);
 
 // Iniciar el servidor
 const PORT = process.env.PORT || 3000;
