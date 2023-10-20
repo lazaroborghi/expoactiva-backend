@@ -4,7 +4,7 @@ import UserEvent from "../../models/UserEvent.js";
 
 let expo = new Expo();
 
-const startCronJob = () => {
+export const startCronJob = () => {
 
     const task = cron.schedule('* * * * *', async () => {
         console.log('Running a task every minute');
@@ -71,5 +71,3 @@ const sendPushNotification = async (token) => {
     console.error(`Error in sending push notification: ${error}`);
   }
 };
-
-export default { startCronJob };
