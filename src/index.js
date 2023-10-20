@@ -8,7 +8,7 @@ import authRouter from "./routes/authRoutes.js";
 import dotenv from "dotenv";
 import exhibitorRouter from "./routes/exhibitorRoutes.js";
 import favouriteRouter from "./routes/favouriteRoutes.js";
-import './services/cron/eventReminderCron.js';
+import { startCronJob } from './services/cron/eventReminderCron.js';
 
 dotenv.config();
 
@@ -32,6 +32,8 @@ app.use("/auth", authRouter);
 app.use("/locations", locationRouter);
 app.use("/exhibitors", exhibitorRouter);
 app.use("/favourites", favouriteRouter);
+
+startCronJob();
 
 // Iniciar el servidor
 const PORT = process.env.PORT || 3000;
