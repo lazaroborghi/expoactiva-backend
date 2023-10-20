@@ -8,6 +8,7 @@ import authRouter from "./routes/authRoutes.js";
 import dotenv from "dotenv";
 import exhibitorRouter from "./routes/exhibitorRoutes.js";
 import favouriteRouter from "./routes/favouriteRoutes.js";
+import './services/cron/eventReminderCron.js';
 
 dotenv.config();
 
