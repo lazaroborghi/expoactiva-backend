@@ -2,14 +2,18 @@ import cron from 'node-cron';
 import { Expo } from 'expo-server-sdk';
 import UserEvent from "../../models/UserEvent.js";
 
-// Crea una nueva instancia de Expo SDK
 let expo = new Expo();
 
-// Configura la tarea para que se ejecute cada minuto
-cron.schedule('* * * * *', async () => {
-  console.log('Running a task every minute');
-  await checkForUpcomingEvents();
-});
+const startCronJob = () => {
+
+    const task = cron.schedule('* * * * *', async () => {
+        console.log('Running a task every minute');
+        await checkForUpcomingEvents();
+    });
+
+    task.start();
+
+};
 
 const checkForUpcomingEvents = async () => {
   try {
@@ -68,3 +72,4 @@ const sendPushNotification = async (token) => {
   }
 };
 
+export default { startCronJob };
