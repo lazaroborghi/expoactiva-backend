@@ -1,5 +1,5 @@
 import cron from 'node-cron';
-import Expo from 'expo-server-sdk';
+import { Expo } from 'expo-server-sdk';
 import UserEvent from "../../models/UserEvent.js";
 
 // Crea una nueva instancia de Expo SDK
