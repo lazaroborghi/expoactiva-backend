@@ -3,7 +3,7 @@ import express from "express";
 import database from "./config/database.js";
 //import authenticateJWT from "./middleware/authMiddleware.js";
 import locationRouter from "./routes/locationRoutes.js";
-import eventRouter from "./routes/eventRoutes.js";
+//import eventRouter from "./routes/eventRoutes.js";
 import authRouter from "./routes/authRoutes.js";
 import dotenv from "dotenv";
 import exhibitorRouter from "./routes/exhibitorRoutes.js";
@@ -26,9 +26,10 @@ app.use("/exhibitors", exhibitorRouter);
 
 //app.use(authenticateJWT); // Middleware para verificar JWT (se encuentra en src\middleware\authMiddleware.js
 
+//app.use(authMoshi); // Middleware para verificar token de moshi moshi
+
 // Rutas
 app.use("/locations", locationRouter);
-app.use("/events", eventRouter);
 
 // Iniciar el servidor
 const PORT = process.env.PORT || 3000;
