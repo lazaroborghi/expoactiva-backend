@@ -6,17 +6,21 @@ export const checkForUpcomingEvents = async () => {
     try {
         console.log('Buscando eventos que comenzarán en 15 minutos');
 
-        // Obtener la fecha actual y el tiempo de notificación (15 minutos antes)
-        let date = new Date();
-        let notificationTime = date.setMinutes(date.getMinutes() + 15);
+        // Obtener la fecha actual en UTC
+        let now = new Date();
+        let currentDate = new Date(now.getTime() + now.getTimezoneOffset() * 60000);
 
-        console.log('date: ', date);
-        console.log('notificationTime: ', notificationTime);
+        // Calcular el tiempo de notificación (15 minutos después) en UTC
+        let notificationTime = new Date(currentDate.getTime());
+        notificationTime.setUTCMinutes(currentDate.getUTCMinutes() + 15);
+
+        console.log('currentDate UTC: ', currentDate.toISOString());
+        console.log('notificationTime UTC: ', notificationTime.toISOString());
 
         // Buscar eventos que comenzarán en 15 minutos
         const events = await UserEvent.find({
           eventStartTime: {
-            $gte: date,
+            $gte: currentDate,
             $lt: notificationTime
           }
         });
