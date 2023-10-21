@@ -4,19 +4,24 @@ import { Expo } from 'expo-server-sdk';
 
 export const checkForUpcomingEvents = async () => {
     try {
-        console.log('Ejecutando la tarea de verificación de eventos');
+        console.log('Buscando eventos que comenzarán en 15 minutos');
 
         // Obtener la fecha actual y el tiempo de notificación (15 minutos antes)
-        let notificationTime = new Date();
-        notificationTime.setMinutes(notificationTime.getMinutes() + 15);
+        let date = new Date();
+        let notificationTime = date.setMinutes(date.getMinutes() + 15);
+
+        console.log('date: ', date);
+        console.log('notificationTime: ', notificationTime);
 
         // Buscar eventos que comenzarán en 15 minutos
         const events = await UserEvent.find({
           eventStartTime: {
-            $gte: new Date(),
+            $gte: date,
             $lt: notificationTime
           }
         });
+
+        console.log('Eventos encontrados: ', events);
 
         // Para cada evento, enviar una notificación push
         for (let event of events) {
