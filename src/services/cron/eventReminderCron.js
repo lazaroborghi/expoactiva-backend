@@ -15,6 +15,46 @@ async function getEventById(eventId) {
     }
 }
 
+export const cleanUpUserEvents = async () => {
+    try {
+        console.log('Limpiando eventos antiguos o con tokens inválidos');
+
+        // Obtener la fecha y hora actual en UTC
+        let nowUTC = new Date();
+
+        // Convertir la fecha/hora actual a UTC-3
+        let nowUTCMinus3 = new Date(nowUTC.getTime() - (3 * 60 * 60 * 1000)); // restas 3 horas
+
+        // Redondear la fecha/hora al minuto más cercano
+        nowUTCMinus3.setSeconds(0, 0); // restablece segundos y milisegundos a 0
+
+        console.log('Fecha/Hora actual redondeada (UTC-3):', nowUTCMinus3.toISOString());
+
+        // Eliminar eventos cuya fecha 'timeToSendNotification' haya pasado en UTC-3
+        await UserEvent.deleteMany({
+            timeToSendNotification: { $lt: nowUTCMinus3 }
+        });
+
+        // Obtener todos los eventos
+        const allEvents = await UserEvent.find({});
+
+        // Filtrar los eventos con tokens inválidos
+        const invalidTokenEvents = allEvents.filter(event => !Expo.isExpoPushToken(event.expoPushToken));
+
+        // Si hay eventos con tokens inválidos, eliminarlos
+        if (invalidTokenEvents.length > 0) {
+            console.log(`Eliminando ${invalidTokenEvents.length} eventos con tokens inválidos`);
+            for (const invalidEvent of invalidTokenEvents) {
+                await UserEvent.deleteOne({ _id: invalidEvent._id });
+            }
+        }
+
+        console.log('Limpieza completada');
+    } catch (error) {
+        console.error('Error en la limpieza de UserEvents', error);
+    }
+};
+
 export const checkForUpcomingEvents = async () => {
     try {
         console.log('Buscando eventos próximos a comenzar');

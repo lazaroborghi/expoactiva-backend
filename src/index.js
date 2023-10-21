@@ -7,7 +7,7 @@ import authRouter from "./routes/authRoutes.js";
 import dotenv from "dotenv";
 import exhibitorRouter from "./routes/exhibitorRoutes.js";
 import favouriteRouter from "./routes/favouriteRoutes.js";
-import { checkForUpcomingEvents } from './services/cron/eventReminderCron.js';
+import { cleanUpUserEvents, checkForUpcomingEvents } from './services/cron/eventReminderCron.js';
 
 dotenv.config();
 
@@ -34,6 +34,7 @@ app.use("/favourites", favouriteRouter);
 
 app.get('/tasks/checkForEvents', async (req, res) => {
     console.log('Ejecutando la tarea de verificación de eventos');
+    await cleanUpUserEvents().catch(error => console.error('Error en cleanUpUserEvents', error));
     await checkForUpcomingEvents().catch(error => console.error('Error en checkForUpcomingEvents', error));
     res.send('Tarea completada');
 });
