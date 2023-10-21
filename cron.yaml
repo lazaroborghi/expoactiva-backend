@@ -1,0 +1,4 @@
+cron:
+- description: "Tarea de verificación de eventos cada minuto"
+  url: /tasks/checkForEvents
+  schedule: every 1 minutes

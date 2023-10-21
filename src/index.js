@@ -1,5 +1,4 @@
 import express from "express";
-import cron from 'node-cron';
 import database from "./config/database.js";
 //import authenticateJWT from "./middleware/authMiddleware.js";
 import locationRouter from "./routes/locationRoutes.js";
@@ -33,11 +32,12 @@ app.use("/locations", locationRouter);
 app.use("/exhibitors", exhibitorRouter);
 app.use("/favourites", favouriteRouter);
 
-cron.schedule('* * * * *', async () => {
-    console.log('Running a task every minute');
+app.get('/tasks/checkForEvents', async (req, res) => {
+    console.log('Ejecutando la tarea de verificación de eventos');
     await checkForUpcomingEvents();
+    res.send('Tarea completada');
 });
-
+  
 // Iniciar el servidor
 const PORT = process.env.PORT || 3000;
 app.listen(PORT, () => {
