@@ -98,7 +98,7 @@ const sendPushNotification = async (token, eventId, retryCount = 0) => {
     if (retryCount < MAX_RETRIES) {
       console.log(`Reintentando... Intento ${retryCount + 1} de ${MAX_RETRIES}`);
       await new Promise(r => setTimeout(r, 2000)); // Espera 2 segundos antes de reintentar
-      return sendPushNotification(token, retryCount + 1);
+      return sendPushNotification(token, eventId, retryCount + 1);
     } else {
       console.log('Se alcanzó el número máximo de intentos. Marcando como enviada.');
       return false;
