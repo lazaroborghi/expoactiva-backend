@@ -2,10 +2,6 @@ import expo from "../../config/expoInstance.js";
 import UserEvent from "../../models/UserEvent.js";
 import { Expo } from 'expo-server-sdk';
 
-import expo from "../../config/expoInstance.js";
-import UserEvent from "../../models/UserEvent.js";
-import { Expo } from 'expo-server-sdk';
-
 export const checkForUpcomingEvents = async () => {
     try {
         console.log('Buscando eventos que comenzarán en 15 minutos');
