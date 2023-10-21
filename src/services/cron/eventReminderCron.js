@@ -1,6 +1,19 @@
 import expo from "../../config/expoInstance.js";
 import UserEvent from "../../models/UserEvent.js";
 import { Expo } from 'expo-server-sdk';
+import axios from "axios";
+
+async function getEventById(eventId) {
+    try {
+      const response = await axios.get(`https://expoactivawebbackend.uc.r.appspot.com/open/event/${eventId}`);
+      
+      console.log(response.data);
+      return response.data;
+    } catch (error) {
+      console.error('Error al hacer una petición a la API: ', error);
+      throw error; 
+    }
+}
 
 export const checkForUpcomingEvents = async () => {
     try {
@@ -32,7 +45,7 @@ export const checkForUpcomingEvents = async () => {
 
         // Para cada evento, enviar una notificación push
         for (let event of events) {
-          const success = await sendPushNotification(event.expoPushToken);
+          const success = await sendPushNotification(event.expoPushToken, event.id);
           if (success) {
             console.log(`Notificación enviada con éxito para el token: ${event.expoPushToken}`);
           } else {
@@ -46,16 +59,19 @@ export const checkForUpcomingEvents = async () => {
     }
 };
 
-const sendPushNotification = async (token, retryCount = 0) => {
+const sendPushNotification = async (token, eventId, retryCount = 0) => {
   const MAX_RETRIES = 3;
   try {
+
     // Crear el mensaje que se enviará
+    const event = await getEventById(eventId);
+
     let message = {
       to: token,
       sound: 'default',
-      title: 'Evento por comenzar',
-      body: 'El evento esta por comenzar en 15 minutos!',
-      data: { someData: 'hola' },
+      title: event.eventName,
+      body: 'Comenzará en 15 minutos!',
+      data: { idEvent: eventId },
     };
 
     console.log('ExpoToken: ', token);
