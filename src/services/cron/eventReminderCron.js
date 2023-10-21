@@ -17,38 +17,36 @@ async function getEventById(eventId) {
 
 export const checkForUpcomingEvents = async () => {
     try {
-        console.log('Buscando eventos que comenzarán en 15 minutos');
+        console.log('Buscando eventos próximos a comenzar');
 
-        // Obtener la fecha actual en UTC
+        // Obtener la fecha y hora actual en UTC
         let now = new Date();
 
         // Convertir a UTC-3
         let currentDate = new Date(now.getTime() - (3 * 3600 * 1000)); 
 
-        // Calcular el tiempo de notificación (15 minutos después) en UTC-3
-        let notificationTime = new Date(currentDate.getTime());
-        notificationTime.setMinutes(currentDate.getMinutes() + 15);
+        // Redondear currentDate al inicio del minuto actual (ignorando segundos y milisegundos)
+        currentDate.setSeconds(0, 0); // Establece los segundos y milisegundos en 0
 
-        console.log('currentDate UTC-3: ', currentDate.toISOString());
-        console.log('notificationTime UTC-3: ', notificationTime.toISOString());
+        console.log('currentDate UTC-3 (redondeada): ', currentDate.toISOString());
 
-        // Buscar eventos que comenzarán en 15 minutos y aún no han sido notificados
+        // Buscar eventos cuyo timeToSendNotification sea en el minuto actual y aún no han sido notificados
         const events = await UserEvent.find({
-          eventStartTime: {
-            $gte: currentDate.toISOString(),
-            $lt: notificationTime.toISOString()
+          timeToSendNotification: {
+            $gte: new Date(currentDate),
+            $lt: new Date(currentDate.getTime() + 60000) // Agrega un minuto
           },
-          notificationSent: false, // Solo busca eventos donde la notificación aún no ha sido enviada
+          notificationSent: false,
         });
 
         console.log('Eventos encontrados: ', events);
 
         // Para cada evento, enviar una notificación push y marcar como notificado
         for (let event of events) {
-            await sendPushNotification(event.expoPushToken);
+            await sendPushNotification(event.expoPushToken, event.eventId); // Asegúrate de pasar eventId también
             event.notificationSent = true;
             await event.save();
-          }
+        }
     } catch (error) {
         console.error('Error dentro de checkForUpcomingEvents', error);
     }
