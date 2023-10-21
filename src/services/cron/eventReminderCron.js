@@ -43,26 +43,19 @@ export const checkForUpcomingEvents = async () => {
 
         console.log('Eventos encontrados: ', events);
 
-        // Para cada evento, enviar una notificación push
+        // Para cada evento, enviar una notificación push y marcar como notificado
         for (let event of events) {
-          const success = await sendPushNotification(event.expoPushToken, event.id);
-          if (success) {
-            console.log(`Notificación enviada con éxito para el token: ${event.expoPushToken}`);
-          } else {
-            console.log(`No se pudo enviar la notificación después de varios intentos, marcando como enviada de todos modos para el token: ${event.expoPushToken}`);
+            await sendPushNotification(event.expoPushToken);
+            event.notificationSent = true;
+            await event.save();
           }
-          event.notificationSent = true;
-          await event.save();
-        }
     } catch (error) {
         console.error('Error dentro de checkForUpcomingEvents', error);
     }
 };
 
-const sendPushNotification = async (token, eventId, retryCount = 0) => {
-  const MAX_RETRIES = 3;
+const sendPushNotification = async (token, eventId) => {
   try {
-
     // Crear el mensaje que se enviará
     const event = await getEventById(eventId);
 
@@ -84,24 +77,20 @@ const sendPushNotification = async (token, eventId, retryCount = 0) => {
       return false; 
     }
 
-    // Enviar las notificaciones
-    let chunks = expo.chunkPushNotifications([message]);
-    let tickets = [];
-    for (let chunk of chunks) {
-      let ticketChunk = await expo.sendPushNotificationsAsync(chunk);
-      tickets.push(...ticketChunk);
-      
-    }
-    return true; 
+     // Enviar las notificaciones
+     let chunks = expo.chunkPushNotifications([message]);
+     let tickets = [];
+     (async () => {
+       for (let chunk of chunks) {
+         try {
+           let ticketChunk = await expo.sendPushNotificationsAsync(chunk);
+           tickets.push(...ticketChunk);
+         } catch (error) {
+           console.error(`Error sending push notification: ${error}`);
+         }
+       }
+     })();
   } catch (error) {
     console.error(`Error sending push notification: ${error}`);
-    if (retryCount < MAX_RETRIES) {
-      console.log(`Reintentando... Intento ${retryCount + 1} de ${MAX_RETRIES}`);
-      await new Promise(r => setTimeout(r, 2000)); // Espera 2 segundos antes de reintentar
-      return sendPushNotification(token, eventId, retryCount + 1);
-    } else {
-      console.log('Se alcanzó el número máximo de intentos. Marcando como enviada.');
-      return false;
-    }
   }
 };
