@@ -1,21 +1,10 @@
-import cron from 'node-cron';
+
 import { Expo } from 'expo-server-sdk';
 import UserEvent from "../../models/UserEvent.js";
 
 let expo = new Expo();
 
-export const startCronJob = () => {
-
-    const task = cron.schedule('* * * * *', async () => {
-        console.log('Running a task every minute');
-        await checkForUpcomingEvents();
-    });
-
-    task.start();
-
-};
-
-const checkForUpcomingEvents = async () => {
+export const checkForUpcomingEvents = async () => {
   try {
     // Obtener la fecha actual y el tiempo de notificación (15 minutos antes)
     let notificationTime = new Date();
@@ -44,6 +33,7 @@ const sendPushNotification = async (token) => {
     let message = {
       to: token,
       sound: 'default',
+      title: 'Evento por comenzar',
       body: 'El evento esta por comenzar en 15 minutos!',
       data: { someData: 'hola' },
     };

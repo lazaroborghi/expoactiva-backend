@@ -1,5 +1,5 @@
 import express from "express";
-
+import cron from 'node-cron';
 import database from "./config/database.js";
 //import authenticateJWT from "./middleware/authMiddleware.js";
 import locationRouter from "./routes/locationRoutes.js";
@@ -8,7 +8,7 @@ import authRouter from "./routes/authRoutes.js";
 import dotenv from "dotenv";
 import exhibitorRouter from "./routes/exhibitorRoutes.js";
 import favouriteRouter from "./routes/favouriteRoutes.js";
-import { startCronJob } from './services/cron/eventReminderCron.js';
+import { checkForUpcomingEvents } from './services/cron/eventReminderCron.js';
 
 dotenv.config();
 
@@ -33,7 +33,10 @@ app.use("/locations", locationRouter);
 app.use("/exhibitors", exhibitorRouter);
 app.use("/favourites", favouriteRouter);
 
-startCronJob();
+cron.schedule('* * * * *', async () => {
+    console.log('Running a task every minute');
+    await checkForUpcomingEvents();
+});
 
 // Iniciar el servidor
 const PORT = process.env.PORT || 3000;
