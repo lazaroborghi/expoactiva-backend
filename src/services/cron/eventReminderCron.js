@@ -54,6 +54,8 @@ export const checkForUpcomingEvents = async () => {
 
 const sendPushNotification = async (token, eventId) => {
   try {
+
+    console.log('eventId', eventId);
     // Crear el mensaje que se enviará
     const event = await getEventById(eventId);
 

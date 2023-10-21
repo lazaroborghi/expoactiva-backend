@@ -5,7 +5,6 @@ const UserEventSchema = new mongoose.Schema(
     expoPushToken: {
       type: String,
       required: true,
-      unique: true,
     },
     eventId: {
       type: Number,
