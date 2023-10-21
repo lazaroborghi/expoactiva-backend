@@ -19,6 +19,9 @@ const UserEventSchema = new mongoose.Schema(
         type: Boolean,
         default: false,
     },
+    timeToSendNotification: {
+        type: Date,
+    },
   },
   {
     timestamps: true,
