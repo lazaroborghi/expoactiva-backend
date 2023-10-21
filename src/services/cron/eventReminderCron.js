@@ -3,29 +3,28 @@ import UserEvent from "../../models/UserEvent.js";
 import { Expo } from 'expo-server-sdk';
 
 export const checkForUpcomingEvents = async () => {
+    try {
+        console.log('Ejecutando la tarea de verificación de eventos');
 
-    console.log('Ejecutando la tarea de verificación de eventos');
+        // Obtener la fecha actual y el tiempo de notificación (15 minutos antes)
+        let notificationTime = new Date();
+        notificationTime.setMinutes(notificationTime.getMinutes() + 15);
 
-  try {
-    // Obtener la fecha actual y el tiempo de notificación (15 minutos antes)
-    let notificationTime = new Date();
-    notificationTime.setMinutes(notificationTime.getMinutes() + 15);
+        // Buscar eventos que comenzarán en 15 minutos
+        const events = await UserEvent.find({
+          eventStartTime: {
+            $gte: new Date(),
+            $lt: notificationTime
+          }
+        });
 
-    // Buscar eventos que comenzarán en 15 minutos
-    const events = await UserEvent.find({
-      eventStartTime: {
-        $gte: new Date(),
-        $lt: notificationTime
-      }
-    });
-
-    // Para cada evento, enviar una notificación push
-    for (let event of events) {
-      await sendPushNotification(event.expoPushToken);
+        // Para cada evento, enviar una notificación push
+        for (let event of events) {
+          await sendPushNotification(event.expoPushToken);
+        }
+    } catch (error) {
+        console.error('Error dentro de checkForUpcomingEvents', error);
     }
-  } catch (error) {
-    console.error("Error checking for upcoming events: ", error);
-  }
 };
 
 const sendPushNotification = async (token) => {
