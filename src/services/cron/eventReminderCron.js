@@ -32,7 +32,10 @@ export const cleanUpUserEvents = async () => {
 
         // Eliminar eventos cuya fecha 'timeToSendNotification' haya pasado en UTC-3
         await UserEvent.deleteMany({
-            timeToSendNotification: { $lt: nowUTCMinus3 }
+            $or: [
+                { timeToSendNotification: { $lt: nowUTCMinus3 } },
+                { notificationSent: true }
+            ]
         });
 
         // Obtener todos los eventos
