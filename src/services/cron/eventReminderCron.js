@@ -1,10 +1,11 @@
-
-import { Expo } from 'expo-server-sdk';
+import expo from "../../config/expoInstance.js";
 import UserEvent from "../../models/UserEvent.js";
-
-let expo = new Expo();
+import { Expo } from 'expo-server-sdk';
 
 export const checkForUpcomingEvents = async () => {
+
+    console.log('Ejecutando la tarea de verificación de eventos');
+
   try {
     // Obtener la fecha actual y el tiempo de notificación (15 minutos antes)
     let notificationTime = new Date();
@@ -37,6 +38,8 @@ const sendPushNotification = async (token) => {
       body: 'El evento esta por comenzar en 15 minutos!',
       data: { someData: 'hola' },
     };
+
+    console.log('ExpoToken: ', token);
 
     // Comprobar que todos los tokens de recepción sean válidos
     if (!Expo.isExpoPushToken(token)) {

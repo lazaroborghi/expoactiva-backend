@@ -5,7 +5,8 @@ import {
     getLocationsByDevice,
     addInterests,
     getLocationsByDateRange,
-    getLocationsByInterests
+    getLocationsByInterests,
+    getAllLocations,
 } from "../controllers/locationController.js";
 
 const locationRouter = express.Router();
@@ -27,5 +28,8 @@ locationRouter.get("/daterange", getLocationsByDateRange);
 
 // Obtener ubicaciones por intereses
 locationRouter.get("/interests", getLocationsByInterests);
+
+// Obtener todas las ubicaciones
+locationRouter.get('/', getAllLocations);
 
 export default locationRouter;

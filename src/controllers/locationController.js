@@ -111,3 +111,13 @@ export const getLocationsByInterests = async (req, res) => {
         res.status(400).json({ message: error.message });
     }
 };
+
+// Obtener todas las ubicaciones
+export const getAllLocations = async (req, res) => {
+    try {
+        const locations = await Location.find();
+        res.status(200).json(locations);
+    } catch (error) {
+        res.status(500).json({ message: error.message });
+    }
+};
