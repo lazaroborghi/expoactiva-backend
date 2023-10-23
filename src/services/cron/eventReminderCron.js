@@ -108,7 +108,7 @@ const sendPushNotification = async (token, eventId) => {
       to: token,
       sound: 'default',
       title: title,
-      body: 'Comenzará en 15 minutos!',
+      body: '¡Comenzará en 15 minutos!',
       data: { idEvent: eventId },
     };
 
