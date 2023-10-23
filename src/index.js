@@ -8,6 +8,7 @@ import dotenv from "dotenv";
 import exhibitorRouter from "./routes/exhibitorRoutes.js";
 import favouriteRouter from "./routes/favouriteRoutes.js";
 import { cleanUpUserEvents, checkForUpcomingEvents } from './services/cron/eventReminderCron.js';
+import userRouter from "./routes/userRoutes.js";
 
 dotenv.config();
 
@@ -31,6 +32,7 @@ app.use("/auth", authRouter);
 app.use("/locations", locationRouter);
 app.use("/exhibitors", exhibitorRouter);
 app.use("/favourites", favouriteRouter);
+app.use("/user", userRouter);
 
 app.get('/tasks/checkForEvents', async (req, res) => {
     console.log('Ejecutando la tarea de verificación de eventos');
@@ -38,7 +40,7 @@ app.get('/tasks/checkForEvents', async (req, res) => {
     await checkForUpcomingEvents().catch(error => console.error('Error en checkForUpcomingEvents', error));
     res.send('Tarea completada');
 });
-  
+
 // Iniciar el servidor
 const PORT = process.env.PORT || 3000;
 app.listen(PORT, () => {

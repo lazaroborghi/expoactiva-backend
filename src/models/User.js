@@ -3,7 +3,7 @@ import mongoose from 'mongoose';
 const userSchema = new mongoose.Schema({
     sub: {
         type: String,
-        required: true,
+        required: false,
         unique: true
     },
     name: {
@@ -17,6 +17,14 @@ const userSchema = new mongoose.Schema({
     picture: {
         type: String,
         default: null
+    },
+    password: {
+        type: String,
+        require: false
+    },
+    birthDay: {
+        type: Date,
+        require: false
     }
 });
 

@@ -1,9 +1,10 @@
 import User from '../models/User.js';
+import bcrypt from 'bcrypt';
 
 export const findOrCreateLocalUser = async (payload) => {
     try {
         let user = await User.findOne({ email: payload.email });
-        
+
         if (!user) {
             user = new User({
                 sub: payload.sub,
@@ -11,9 +12,9 @@ export const findOrCreateLocalUser = async (payload) => {
                 email: payload.email,
                 picture: payload.picture
             });
-            
+
             console.log(user);
-            
+
             await user.save();
         }
 
@@ -23,3 +24,85 @@ export const findOrCreateLocalUser = async (payload) => {
         throw error;
     }
 };
+
+export const findOrCreateUserByEmail = async (req, res) => {
+    let { name, email, password, birthDay } = req.body;
+    name = ''.trim()
+    email = email.trim();
+    password = password.trim()
+    birthDay = birthDay
+
+    if (email == null || email == '' || password == null || password == "") {
+        res.json({
+            status: "FAILED",
+            message: 'Campos vacíos'
+        })
+    } else if (!/^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$/.test(email)) {
+        res.json({
+            status: "FAILED",
+            message: "El email no es válido"
+        })
+    } else if (password.length < 8) {
+        res.json({
+            status: 'FAILED',
+            message: "Contraseña debe tener mas de 8 cracteres"
+        })
+
+    } else {
+        User.find({ email }).then(result => {
+
+            if (result.length) {
+                res.json({
+                    status: "FAILED",
+                    message: "Este email tiene una cuenta asociada"
+                })
+            } else {
+                const saltRound = 10;
+                bcrypt.hash(password, saltRound).then(hashedPassword => {
+                    const newUser = new User({
+                        name,
+                        email,
+                        password: hashedPassword,
+                        birthDay
+                    });
+
+                    newUser.save().then(result => {
+                        res.json({
+                            status: "SUCCESS",
+                            message: 'Singup successful',
+                            data: result
+                        })
+                    }).catch(err => {
+                        console.log(err)
+                        res.json({
+                            status: "FAILED",
+                            message: "Singup failed"
+                        })
+                    })
+                })
+            }
+        }).catch(err => {
+            console.log(err)
+            res.json({
+                status: "FAILED",
+                message: "Error al buscar el usuario"
+            })
+        })
+    }
+}
+
+
+export const getUserByEmail = async (req, res) => {
+    try {
+        const { email } = req.params;
+        const foundUser = await User.findOne({ email: email })
+        if (!foundUser) {
+            res.status(404).json({ error: "User not found" });
+            return;
+        }
+        res.status(200).json(foundUser);
+    } catch (error) {
+        res.status(500).json({ error: error.message });
+    }
+};
+
