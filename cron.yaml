@@ -1,4 +1,4 @@
 cron:
 - description: "Tarea de verificación de eventos cada minuto"
-  url: http://34.111.68.218/tasks/checkForEvents
+  url: /tasks/checkForEvents
   schedule: every 1 minutes
