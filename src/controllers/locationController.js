@@ -121,3 +121,13 @@ export const getAllLocations = async (req, res) => {
         res.status(500).json({ message: error.message });
     }
 };
+
+// Eliminar todas las ubicaciones
+export const deleteAllLocations = async (req, res) => {
+    try {
+        await Location.deleteMany();
+        res.status(200).json({ message: 'All locations deleted' });
+    } catch (error) {
+        res.status(500).json({ message: error.message });
+    }
+};
