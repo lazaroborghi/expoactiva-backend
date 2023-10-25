@@ -75,7 +75,7 @@ authRouter.post('/google', async (req, res) => {
 
 
 async function generateToken(user, password) {
-    return new Promise(async (resolve, reject) => {
+    return new Promise((resolve, reject) => {
         bcrypt.compare(password, user.password, async (err, result) => {
             if (result) {
                 const jwtPayload = { id: user.sub, email: user.email };
