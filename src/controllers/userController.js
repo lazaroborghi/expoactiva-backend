@@ -1,5 +1,8 @@
 import User from '../models/User.js';
 import bcrypt from 'bcrypt';
+import { Resend } from 'resend';
+import { generateRandomNumber } from '../utils/utils.js';
+import { getSecret } from '../utils/secretManager.js';
 
 export const findOrCreateLocalUser = async (payload) => {
     try {
@@ -71,7 +74,6 @@ export const findOrCreateUserByEmail = async (req, res) => {
         });
     });
 };
-// };
 
 
 export const getUserByEmail = async (req, res) => {
@@ -87,4 +89,27 @@ export const getUserByEmail = async (req, res) => {
         res.status(500).json({ error: error.message });
     }
 };
+
+
+export const verifyEmail = async (req, res) => {
+
+    const verifyMail = await getSecret('VERIFYMAIL');
+    const code = generateRandomNumber();
+    console.log(code);
+    try {
+        const { email } = req.body;
+        const resend = new Resend(verifyMail);
+        await resend.emails.send({
+            from: 'onboarding@resend.dev',
+            to: email,
+            subject: 'Verificar email - Expoactiva Nacional',
+            html: `<p>Ingresa este código en la aplicación para validar tu email <strong>${code}</strong></p>`
+        });
+        res.status(200).json({ code });
+
+    } catch (error) {
+        res.status(500).json({ error: error.message });
+
+    }
+}
 

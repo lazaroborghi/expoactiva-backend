@@ -51,7 +51,7 @@ export const deleteAll = async (req, res) => {
     try {
         const exhibitor = await Exhibitor.deleteMany({});
         if (!exhibitor) {
-            res.status(404).json({ error: "Event not found" }); 
+            res.status(404).json({ error: "Event not found" });
             return;
         }
         res.status(200).json({ message: "Event deleted successfully" });
