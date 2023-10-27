@@ -1,5 +1,6 @@
 import nodemailer from 'nodemailer';
 import {getSecret} from '../utils/secretManager.js';
+import getAccessToken from './emailTokenRefresher.js';
 
 async function getSecrets() {
 
@@ -23,6 +24,7 @@ async function getSecrets() {
 
 const createTransporter = async () => {
     try {
+        const accessToken = await getAccessToken();
         const {EMAIL_USER, GMAIL_CLIENT_ID, GMAIL_CLIENT_SECRET, GMAIL_REFRESH_TOKEN} = await getSecrets();
         const transporter = nodemailer.createTransport({
             service: 'gmail',
@@ -31,7 +33,8 @@ const createTransporter = async () => {
                 user: EMAIL_USER,
                 clientId: GMAIL_CLIENT_ID,
                 clientSecret: GMAIL_CLIENT_SECRET,
-                refreshToken: GMAIL_REFRESH_TOKEN
+                refreshToken: GMAIL_REFRESH_TOKEN,
+                accessToken: accessToken
             }
         });
 

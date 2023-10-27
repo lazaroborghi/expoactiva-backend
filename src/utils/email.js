@@ -1,4 +1,4 @@
-import { createTransporter } from '../config/emailConfig.js';
+import createTransporter from '../config/emailConfig.js';
 import { getSecret } from './secretManager.js';
 
 export const sendGenericEmail = async (to, subject, text) => {
