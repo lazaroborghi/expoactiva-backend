@@ -1,8 +1,7 @@
 import User from '../models/User.js';
 import bcrypt from 'bcrypt';
-import { Resend } from 'resend';
 import { generateRandomNumber } from '../utils/utils.js';
-import { getSecret } from '../utils/secretManager.js';
+import { sendGenericEmail } from '../utils/email.js';
 
 export const findOrCreateLocalUser = async (payload) => {
     try {
@@ -31,6 +30,7 @@ export const findOrCreateUserByEmail = async (req, res) => {
         password = password.trim();
 
         console.log(req.body)
+
         // Verificar si el usuario ya existe
         const existingUser = await User.findOne({ email });
         if (existingUser) {
@@ -46,29 +46,17 @@ export const findOrCreateUserByEmail = async (req, res) => {
             password: hashedPassword,
             birthDay,
         });
-
-        console.log('explote aca?')
+        
         const savedUser = await newUser.save();
 
         console.log(savedUser)
 
-        const verifyMail = await getSecret('VERIFYMAIL');
         const code = generateRandomNumber();
 
-        const resend = new Resend(verifyMail);
-
-        try {
-            const data = await resend.emails.send({
-                from: 'onboarding@resend.dev',
-                to: email,
-                subject: 'Verificar email - Expoactiva Nacional',
-                html: `<p>Ingresa este código en la aplicación para validar tu email <strong>${code}</strong></p>`
-            });
-            console.log(data)
-        } catch (error) {
-            console.error(error);
-        }
-
+        // Enviar el correo de verificación
+        const subject = "Verificación de tu cuenta - Expoactiva Nacional";
+        const text = `Hola ${name}, tu código de verificación es: ${code}`;
+        await sendGenericEmail(email, subject, text);
 
         res.status(200).json({ message: 'Usuario creado con éxito', data: savedUser });
         console.log('Usuario creado con éxito', JSON.stringify(savedUser));
@@ -77,6 +65,7 @@ export const findOrCreateUserByEmail = async (req, res) => {
         res.status(500).json({ error: 'Error en el servidor' });
     }
 };
+
 
 export const getUserByEmail = async (req, res) => {
     try {
