@@ -1,5 +1,5 @@
 import nodemailer from 'nodemailer';
-import {getSecret} from './secretManager';
+import {getSecret} from '../utils/secretManager.js';
 
 async function getSecrets() {
 
