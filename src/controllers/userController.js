@@ -2,6 +2,7 @@ import User from '../models/User.js';
 import bcrypt from 'bcrypt';
 import { generateRandomNumber } from '../utils/utils.js';
 import { sendGenericEmail } from '../utils/email.js';
+import { saveCodeValidator } from './validatorController.js';
 
 export const findOrCreateLocalUser = async (payload) => {
     try {
@@ -46,22 +47,22 @@ export const findOrCreateUserByEmail = async (req, res) => {
             password: hashedPassword,
             birthDay,
         });
-        
+
         const savedUser = await newUser.save();
 
         console.log(savedUser)
 
         const code = generateRandomNumber();
 
-        // Enviar el correo de verificación
         const subject = "Verificación de tu cuenta - Expoactiva Nacional";
         const text = `Hola ${name}, tu código de verificación es: ${code}`;
         await sendGenericEmail(email, subject, text);
 
+        saveCodeValidator(code, email);
+
         res.status(200).json({ message: 'Usuario creado con éxito', data: savedUser });
-        console.log('Usuario creado con éxito', JSON.stringify(savedUser));
+
     } catch (err) {
-        console.error(err);
         res.status(500).json({ error: 'Error en el servidor' });
     }
 };
@@ -71,13 +72,14 @@ export const getUserByEmail = async (req, res) => {
     try {
         const { email } = req.params;
         const foundUser = await User.findOne({ email: email });
+
         if (!foundUser) {
-            res.status(404).json({ error: "User not found" });
-            return;
+            return res.status(404).json({ error: "User not found" });
         }
-        res.status(200).json(foundUser);
+
+        return res.status(200).json(foundUser);
     } catch (error) {
-        res.status(500).json({ error: error.message });
+        return res.status(500).json({ error: error.message });
     }
 };
 

@@ -4,6 +4,7 @@ import database from "./config/database.js";
 import locationRouter from "./routes/locationRoutes.js";
 //import eventRouter from "./routes/eventRoutes.js";
 import authRouter from "./routes/authRoutes.js";
+import validatorCodeRouter from "./routes/codeRoutes.js"
 import dotenv from "dotenv";
 import exhibitorRouter from "./routes/exhibitorRoutes.js";
 import favouriteRouter from "./routes/favouriteRoutes.js";
@@ -33,6 +34,7 @@ app.use("/locations", locationRouter);
 app.use("/exhibitors", exhibitorRouter);
 app.use("/favourites", favouriteRouter);
 app.use("/user", userRouter);
+app.use("/code", validatorCodeRouter);
 
 app.get('/tasks/checkForEvents', async (req, res) => {
     console.log('Ejecutando la tarea de verificación de eventos');
