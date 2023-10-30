@@ -131,3 +131,34 @@ export const deleteAllLocations = async (req, res) => {
         res.status(500).json({ message: error.message });
     }
 };
+
+// Obtener ubicaciones desde una fecha y hora específica hasta ahora
+export const getLocationsFromDateTimeToNow = async (req, res) => {
+    const { date, time } = req.query;
+    
+    // Si no se proporciona la fecha o el tiempo, se devuelve un error
+    if (!date || !time) {
+        return res.status(400).json({ message: 'Both date and time must be provided' });
+    }
+
+    // Crear fecha inicial a partir de los parámetros de la consulta
+    const startDateTime = new Date(`${date}T${time}`);
+
+    try {
+        const locations = await Location.find({
+            date: {
+                $gte: startDateTime,
+                // Se utiliza la fecha y hora actuales como el límite superior
+                $lte: new Date()
+            }
+        });
+        
+        if (locations.length === 0) {
+            return res.status(404).json({ message: 'No locations found for the given date and time range' });
+        }
+        
+        res.status(200).json(locations);
+    } catch (error) {
+        res.status(500).json({ message: error.message });
+    }
+};
