@@ -2,7 +2,7 @@ import User from '../models/User.js';
 import bcrypt from 'bcrypt';
 import { generateRandomNumber } from '../utils/utils.js';
 import { sendGenericEmail } from '../utils/email.js';
-import { saveCodeValidator } from './validatorController.js';
+import moment from 'moment'
 
 export const findOrCreateLocalUser = async (payload) => {
     try {
@@ -13,13 +13,12 @@ export const findOrCreateLocalUser = async (payload) => {
                 email: payload.email,
                 picture: payload.picture
             });
-            console.log(user);
             await user.save();
         }
         return user;
     } catch (error) {
-        console.error("Error al buscar o crear el usuario:", error.message);
-        throw error;
+
+        throw new Error(error);
     }
 };
 
@@ -40,25 +39,24 @@ export const findOrCreateUserByEmail = async (req, res) => {
 
         const saltRound = 10;
         const hashedPassword = await bcrypt.hash(password, saltRound);
-
+        const expirationCode = moment().add(24, 'hours')
+        const code = generateRandomNumber();
         const newUser = new User({
             name,
             email,
             password: hashedPassword,
             birthDay,
+            code,
+            expirationCode,
+            validateEmail: false
         });
 
         const savedUser = await newUser.save();
 
-        console.log(savedUser)
-
-        const code = generateRandomNumber();
 
         const subject = "Verificación de tu cuenta - Expoactiva Nacional";
         const text = `Hola ${name}, tu código de verificación es: ${code}`;
-        await sendGenericEmail(email, subject, text);
-
-        saveCodeValidator(code, email);
+        // await sendGenericEmail(email, subject, text);
 
         res.status(200).json({ message: 'Usuario creado con éxito', data: savedUser });
 
@@ -83,3 +81,34 @@ export const getUserByEmail = async (req, res) => {
     }
 };
 
+
+export const getCode = async (req, res) => {
+    try {
+        const { email } = req.params;
+        const foundUser = await User.findOne({ email: email });
+
+        if (!foundUser) {
+            return res.status(404).json({ error: "User not found" });
+        }
+
+        return res.status(200).json({
+            code: foundUser.code,
+            expirationDate: foundUser.expirationCode
+        });
+    } catch (error) {
+        return res.status(500).json({ error: error.message });
+    }
+
+}
+export const updateUser = async function (req, res) {
+    try {
+        const updatedUser = await User.findOneAndUpdate({ email: req.params.email }, req.body, { new: true });
+        if (updatedUser) {
+            res.json(updatedUser);
+        } else {
+            res.status(404).json({ error: "Usuario no encontrado" });
+        }
+    } catch (err) {
+        res.status(500).json({ error: err.message });
+    }
+};
