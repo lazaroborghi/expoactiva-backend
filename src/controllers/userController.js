@@ -55,7 +55,13 @@ export const findOrCreateUserByEmail = async (req, res) => {
 
 
         const subject = "Verificación de tu cuenta - Expoactiva Nacional";
-        const htmlContent = `Hola ${name}, tu código de verificación para ingresar a Expoactiva Nacional App es: <span style="color: blue;">${code}</span>`;
+        const htmlContent = `
+            Hola ${name}, tu código de verificación para ingresar a Expoactiva Nacional App es: 
+            <a href="javascript:void(0)" onclick="navigator.clipboard.writeText('${code}')">
+                <span style="color: blue;">${code}</span>
+            </a>
+            <br><br>
+        `;
         await sendGenericEmail(email, subject, htmlContent);
 
         res.status(200).json({ message: 'Usuario creado con éxito', data: savedUser });
