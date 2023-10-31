@@ -103,12 +103,16 @@ const sendPushNotification = async (token, eventId) => {
     const event = await getEventById(eventId);
 
     const title = event.eventName !== '' ? event.eventName : 'Evento Expoactiva';
+    const startDateTime = new Date(event.dateHourStart);
+    const endDateTime = new Date(event.dateHourEnd);
+    const startTimeFormatted = formatTime(startDateTime);
+    const endTimeFormatted = formatTime(endDateTime);
 
     let message = {
       to: token,
       sound: 'default',
       title: title,
-      body: '¡Comenzará en 15 minutos!',
+      body: `¡Comenzará en 10 minutos!\n${startTimeFormatted} - ${endTimeFormatted}`,
       data: { idEvent: eventId },
     };
 

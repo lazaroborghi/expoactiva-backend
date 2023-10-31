@@ -35,8 +35,8 @@ UserEventSchema.pre('save', function(next) {
     }
 
     if (!this.timeToSendNotification) {
-        //resta 15 minutos
-        this.timeToSendNotification = new Date(this.eventStartTime.getTime() - (15 * 60000));
+        //resta 10 minutos
+        this.timeToSendNotification = new Date(this.eventStartTime.getTime() - (10 * 60000));
     }
 
     next();
