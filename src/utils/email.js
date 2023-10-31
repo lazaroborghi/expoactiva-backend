@@ -6,7 +6,7 @@ export const sendGenericEmail = async (to, subject, html) => {
         from: `"Expoactiva Nacional" <${await getSecret('EMAIL_USER')}>`,
         to: to,
         subject: subject,
-        text: html
+        html: html
     };
     try {
         const transporter = await createTransporter();
