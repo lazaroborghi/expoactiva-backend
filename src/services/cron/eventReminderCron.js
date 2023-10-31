@@ -103,8 +103,16 @@ const sendPushNotification = async (token, eventId) => {
     const event = await getEventById(eventId);
 
     const title = event.eventName !== '' ? event.eventName : 'Evento Expoactiva';
-    const startDateTime = new Date(event.dateHourStart);
-    const endDateTime = new Date(event.dateHourEnd);
+    // Restar 3 horas para convertir a UTC-3
+    const startDateTime = new Date(event.dateHourStart.getTime() - (3 * 3600 * 1000));
+    const endDateTime = new Date(event.dateHourEnd.getTime() - (3 * 3600 * 1000));
+
+    const formatTime = date => {
+      const hours = ("0" + date.getHours()).slice(-2);
+      const minutes = ("0" + date.getMinutes()).slice(-2);
+      return `${hours}:${minutes}`;
+    }
+
     const startTimeFormatted = formatTime(startDateTime);
     const endTimeFormatted = formatTime(endDateTime);
 
