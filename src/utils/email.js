@@ -1,12 +1,12 @@
 import createTransporter from '../config/emailConfig.js';
 import { getSecret } from './secretManager.js';
 
-export const sendGenericEmail = async (to, subject, text) => {
+export const sendGenericEmail = async (to, subject, html) => {
     let mailOptions = {
         from: `"Expoactiva Nacional" <${await getSecret('EMAIL_USER')}>`,
         to: to,
         subject: subject,
-        text: text
+        text: html
     };
     try {
         const transporter = await createTransporter();
