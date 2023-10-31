@@ -154,7 +154,7 @@ export const getLocationsFromDateTimeToNow = async (req, res) => {
         });
         
         if (locations.length === 0) {
-            return res.status(404).json({ message: 'No locations found for the given date and time range' });
+            return res.status(404).json(locations);
         }
         
         res.status(200).json(locations);
