@@ -57,7 +57,7 @@ export const findOrCreateUserByEmail = async (req, res) => {
         const subject = "Verificación de tu cuenta - Expoactiva Nacional";
         const htmlContent = `
             Hola ${name},<br><br>
-            Tu código de verificación para ingresar a Expoactiva Nacional App es: 
+            Tu código de verificación es: 
             <a href="#" style="color: blue; text-decoration: underline; cursor: pointer;">${code}</a>
             <br><br>
         `;
