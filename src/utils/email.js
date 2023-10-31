@@ -4,6 +4,7 @@ import { getSecret } from './secretManager.js';
 export const sendGenericEmail = async (to, subject, text) => {
     let mailOptions = {
         from: await getSecret('EMAIL_USER'),
+        sender: 'Expoactiva Nacional',
         to: to,
         subject: subject,
         text: text
