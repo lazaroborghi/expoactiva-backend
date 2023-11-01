@@ -79,4 +79,3 @@ jobs:
       if: ${{ github.event_name == 'push' }}
       run: |
         gcloud app deploy app.yaml
-        gcloud app deploy cron.yaml
