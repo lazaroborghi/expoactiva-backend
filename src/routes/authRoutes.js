@@ -49,11 +49,17 @@ authRouter.post('/google', async (req, res) => {
         const payload = ticket.getPayload();
         console.log('payload', payload);
 
+        const profile = {
+            name: payload.name,
+            email: payload.email,
+            picture: payload.picture,
+        };
+
         // Autentica y crea/encuentra al usuario
-        const user = await UserServices.findOrCreateUser(payload);
+        const user = await UserServices.findOrCreateUser(profile);
 
         // Crea y envía el JWT
-        const jwtPayload = { id: user.sub, email: user.email };
+        const jwtPayload = { id: user._id, email: user.email };
         const secretKey = await getSecret('KEY');
         const token = await createToken(jwtPayload, secretKey);
 
@@ -69,7 +75,7 @@ async function generateToken(user, password) {
     return new Promise((resolve, reject) => {
         bcrypt.compare(password, user.password, async (err, result) => {
             if (result) {
-                const jwtPayload = { id: user.sub, email: user.email };
+                const jwtPayload = { id: user._id, email: user.email };
                 const secretKey = await getSecret('KEY');
                 const token = await createToken(jwtPayload, secretKey);
                 resolve(token);
