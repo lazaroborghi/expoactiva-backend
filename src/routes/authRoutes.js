@@ -8,20 +8,10 @@ import bcrypt from 'bcrypt';
 
 const authRouter = express.Router();
 
-async function getSecrets() {
+async function getWebClientId() {
 
-    const [WEB_CLIENT_ID, IOS_CLIENT_ID] = await Promise.all([
-        getSecret('WEB_CLIENT_ID'),
-        getSecret('IOS_CLIENT_ID')
-    ]);
-
-    const secrets = {
-        WEB_CLIENT_ID,
-        IOS_CLIENT_ID
-    };
-
-    return secrets;
-
+    const WEB_CLIENT_ID = await getSecret('WEB_CLIENT_ID');
+    return WEB_CLIENT_ID;
 }
 
 const createToken = async (payload, secretKey) => {
@@ -35,8 +25,9 @@ const createToken = async (payload, secretKey) => {
 authRouter.post('/google', async (req, res) => {
     const tokenId = req.body.tokenId; // El token ID enviado desde la aplicación móvil
     const platform = req.body.platform; // La plataforma desde la que se está autenticando el usuario
+    const IOS_CLIENT_ID = req.body.IOS_CLIENT_ID; // El client ID de iOS
 
-    const { WEB_CLIENT_ID, IOS_CLIENT_ID } = await getSecrets();
+    const WEB_CLIENT_ID = await getWebClientId();
 
     const CLIENT = platform === 'android' ? WEB_CLIENT_ID : IOS_CLIENT_ID;
 
