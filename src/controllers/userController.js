@@ -56,17 +56,19 @@ export const signup = async (req, res) => {
 };
 
 async function sendVerificationEmail(email, name, code) {
-
     const subject = "Verificación de tu cuenta - Expoactiva Nacional";
-    const text = `Hola ${name}, tu código de verificación es: ${code}`;
+    const htmlContent = `
+            Hola ${name},<br><br>
+            Tu código de verificación es: 
+            <a href="#" style="color: blue; text-decoration: underline; cursor: pointer;">${code}</a>
+            <br><br>
+        `;
 
     try {
-        await sendGenericEmail(email, subject, text);
+        await sendGenericEmail(email, subject, htmlContent);
         return true;
     } catch (error) { return false; }
 }
-
-
 
 export const getUserByEmail = async (req, res) => {
     try {
@@ -81,7 +83,6 @@ export const getUserByEmail = async (req, res) => {
 
 
 export const getCode = async (req, res) => {
-
     try {
         const { email, code } = req.query;
         const foundUser = await User.findOne({ email: email });
