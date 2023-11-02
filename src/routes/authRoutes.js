@@ -8,20 +8,10 @@ import bcrypt from 'bcrypt';
 
 const authRouter = express.Router();
 
-async function getSecrets() {
+async function getWebClientId() {
 
-    const [WEB_CLIENT_ID, IOS_CLIENT_ID] = await Promise.all([
-        getSecret('WEB_CLIENT_ID'),
-        getSecret('IOS_CLIENT_ID')
-    ]);
-
-    const secrets = {
-        WEB_CLIENT_ID,
-        IOS_CLIENT_ID
-    };
-
-    return secrets;
-
+    const WEB_CLIENT_ID = await getSecret('WEB_CLIENT_ID');
+    return WEB_CLIENT_ID;
 }
 
 const createToken = async (payload, secretKey) => {
@@ -33,30 +23,50 @@ const createToken = async (payload, secretKey) => {
 authRouter.post('/google', async (req, res) => {
     const tokenId = req.body.tokenId; // El token ID enviado desde la aplicación móvil
     const platform = req.body.platform; // La plataforma desde la que se está autenticando el usuario
-    const { WEB_CLIENT_ID, IOS_CLIENT_ID } = await getSecrets();
+    const IOS_CLIENT_ID = req.body.IOS_CLIENT_ID; // El client ID de iOS
+
+    const WEB_CLIENT_ID = await getWebClientId();
+
     const CLIENT = platform === 'android' ? WEB_CLIENT_ID : IOS_CLIENT_ID;
+
+    console.log('WEB_CLIENT_ID', WEB_CLIENT_ID);
+    console.log('IOS_CLIENT_ID', IOS_CLIENT_ID);
+    console.log('CLIENT', CLIENT);
+
     const oAuth2Client = new OAuth2Client(CLIENT);
 
     try {
+        console.log('tokenId', tokenId);
+        console.log('platform', platform);
+
         const ticket = await oAuth2Client.verifyIdToken({
             idToken: tokenId,
             audience: CLIENT, // Verificamos usando el client ID correspondiente
         });
 
         const payload = ticket.getPayload();
+        console.log('payload', payload);
+
+        const profile = {
+            name: payload.name,
+            email: payload.email,
+            picture: payload.picture,
+        };
+
         // Autentica y crea/encuentra al usuario
-        const user = await UserServices.findOrCreateUser(payload);
+        const user = await UserServices.findOrCreateUser(profile);
 
         // Crea y envía el JWT
-        const jwtPayload = { id: user.sub, email: user.email };
+        const jwtPayload = { id: user._id, email: user.email };
         const secretKey = await getSecret('KEY');
         const token = await createToken(jwtPayload, secretKey);
 
         res.json({ token, user: user });
 
-    } catch (error) { return res.status(401).json({ error: 'Authentication failed' }); }
+    } catch (error) {
+        return res.status(401).json({ error: 'Authentication failed' });
+    }
 });
-
 
 async function generateToken(user, password) {
     return new Promise((resolve, reject) => {
