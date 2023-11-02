@@ -25,7 +25,11 @@ const locationSchema = new mongoose.Schema({
         {
             type: String,
         }
-    ]
+    ],
+    ageRange: {
+        type: String,
+        required: false
+    }
 });
 
 export default mongoose.model('Location', locationSchema);
