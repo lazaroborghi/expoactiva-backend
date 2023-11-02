@@ -14,12 +14,19 @@ async function getSecrets() {
         getSecret('WEB_CLIENT_ID'),
         getSecret('IOS_CLIENT_ID')
     ]);
-    const secrets = { WEB_CLIENT_ID, IOS_CLIENT_ID };
+
+    const secrets = {
+        WEB_CLIENT_ID,
+        IOS_CLIENT_ID
+    };
+
     return secrets;
+
 }
 
 const createToken = async (payload, secretKey) => {
     if (!secretKey) { throw new Error('secretKey is missing or empty'); }
+
     return jwt.sign(payload, secretKey, { expiresIn: '48h' });
 };
 

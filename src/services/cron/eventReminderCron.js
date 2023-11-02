@@ -23,7 +23,7 @@ export const cleanUpUserEvents = async () => {
         let nowUTC = new Date();
 
         // Convertir la fecha/hora actual a UTC-3
-        let nowUTCMinus3 = new Date(nowUTC.getTime() - (3 * 60 * 60 * 1000)); // restas 3 horas
+        let nowUTCMinus3 = new Date(nowUTC.getTime() - (3 * 60 * 60 * 1000)); // resta 3 horas
 
         // Redondear la fecha/hora al minuto más cercano
         nowUTCMinus3.setSeconds(0, 0); // restablece segundos y milisegundos a 0
@@ -108,7 +108,7 @@ const sendPushNotification = async (token, eventId) => {
       to: token,
       sound: 'default',
       title: title,
-      body: '¡Comenzará en 15 minutos!',
+      body: '¡Comenzará en 10 minutos!',
       data: { idEvent: eventId },
     };
 

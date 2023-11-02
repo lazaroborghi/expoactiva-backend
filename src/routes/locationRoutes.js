@@ -7,7 +7,8 @@ import {
     getLocationsByDateRange,
     getLocationsByInterests,
     getAllLocations,
-    deleteAllLocations
+    deleteAllLocations,
+    getLocationsFromDateTimeToNow,
 } from "../controllers/locationController.js";
 
 const locationRouter = express.Router();
@@ -35,5 +36,7 @@ locationRouter.get('/', getAllLocations);
 
 // Eliminar todas las ubicaciones
 locationRouter.delete('/', deleteAllLocations);
+
+locationRouter.get('/datetimenow', getLocationsFromDateTimeToNow);
 
 export default locationRouter;
