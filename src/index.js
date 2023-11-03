@@ -13,10 +13,12 @@ import authMoshiMiddleware from "./middleware/authMoshiMiddleware.js";
 
 dotenv.config();
 
+const test = process.env.NODE_ENV === "test";
+
 // Conectarse a la base de datos
-if (process.env.NODE_ENV !== "test") {
-    database.connect();
-}
+!test && database.connect(); 
+
+// Crear el servidor
 const app = express();
 
 app.use(express.json()); // Middleware que permite recibir JSON en el body de las peticiones
@@ -40,7 +42,7 @@ app.get('/tasks/checkForEvents', async (req, res) => {
     res.send('Tarea completada');
 });
 
-app.use(authMoshiMiddleware);
+!test && app.use(authMoshiMiddleware);
 app.use("/locations", locationRouter);
 
 // Iniciar el servidor
