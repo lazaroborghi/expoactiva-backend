@@ -7,7 +7,7 @@ const authMoshiMiddleware = async (req, res, next) => {
     // Toma el token desde el header (Bearer: Token)
     const authHeader = req.headers.authorization;
     const token = authHeader && authHeader.split(' ')[1];
-    const res = await axios.get(API_URL, { headers: { Authorization: `Bearer ${token}` } })
+    res = await axios.get(API_URL, { headers: { Authorization: `Bearer ${token}` } })
 
     if (res.status === 200) {
         next();
