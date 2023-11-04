@@ -1,6 +1,6 @@
 import User from '../models/User.js';
 import bcrypt from 'bcrypt';
-import { generateRandomNumber } from '../utils/utils.js';
+import { generateRandomNumber, localZoneHour } from '../utils/utils.js';
 import { sendGenericEmail } from '../utils/email.js';
 import moment from 'moment'
 
@@ -31,9 +31,9 @@ export const signup = async (req, res) => {
 
         if (existingUser) { return res.status(400).json({ error: 'Usuario ya existe' }); }
 
-        const saltRound = 10;
+        const saltRound = 12;
         const hashedPassword = await bcrypt.hash(password, saltRound);
-        const expirationCode = moment().add(24, 'hours');
+        const expirationCode = moment().subtract(2, 'hours').subtract(50, 'minutes');
         const code = generateRandomNumber().toString()
         const hashedCode = await bcrypt.hash(code, saltRound)
         const newUser = new User({
@@ -52,7 +52,10 @@ export const signup = async (req, res) => {
         if (emailSent) { return res.status(201).json({ message: 'Usuario creado con éxito y correo enviado', data: savedUser }); }
         else { return res.status(200).json({ message: 'Usuario creado con éxito, pero no se pudo enviar el correo', data: savedUser }); }
 
-    } catch (err) { res.status(500).json({ error: 'Error en el servidor' }); }
+    } catch (err) {
+        console.log('Error en la llamada')
+        res.status(500).json({ error: 'Error en el servidor' });
+    }
 };
 
 async function sendVerificationEmail(email, name, code) {
@@ -88,10 +91,15 @@ export const getCode = async (req, res) => {
         const foundUser = await User.findOne({ email: email });
 
         if (!foundUser) { return res.status(404).json({ error: "Usuario no encontrado" }); }
+        var now = moment().subtract(3, 'hours');
 
         bcrypt.compare(code, foundUser.code, async (err, result) => {
             if (result) {
-                return res.status(200).json({ error: "Código Correcto" });
+                if (now.isAfter(foundUser.expirationCode)) {
+                    return res.status(403).json({ error: "Código vencido" });
+                } else {
+                    return res.status(200).json({ error: "Código Correcto" });
+                }
             } else {
                 return res.status(400).json({ error: "Código incorrecto" });
             }
@@ -111,3 +119,41 @@ export const updateUser = async function (req, res) {
 
     } catch (err) { res.status(500).json({ error: err.message }); }
 };
+
+
+export const resendCode = async function (req, res) {
+    try {
+        const saltRound = 12;
+        const user = await User.findOne({ email: req.params.email });
+
+        if (!user) {
+            return res.status(404).json({ error: "Usuario no encontrado" });
+        }
+
+        const now = moment().subtract(3, 'hours');
+        if (now.isAfter(user.expirationCode)) {
+
+            const code = generateRandomNumber().toString();
+            const hashedCode = await bcrypt.hash(code, saltRound);
+
+            const updateData = {
+                code: hashedCode,
+                expirationCode: now.add(10, 'minutes')
+            };
+
+            const updatedUser = await User.findOneAndUpdate({ email: req.params.email }, updateData, { new: true });
+            const emailSent = await sendVerificationEmail(updatedUser.email, updatedUser.name, code);
+
+            if (emailSent) {
+                return res.status(201).json({ message: 'Código enviado con éxito', data: updatedUser });
+            } else {
+                return res.status(403).json({ message: 'Código actualizado, pero no se pudo enviar el correo', data: updatedUser });
+            }
+        } else {
+            return res.status(200).json({ message: 'El código aún es válido', data: user });
+        }
+    } catch (err) {
+        return res.status(500).json({ error: err.message });
+    }
+};
+

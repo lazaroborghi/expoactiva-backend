@@ -4,3 +4,7 @@ export function generateRandomNumber() {
     return Math.floor(Math
         .random() * (maxm - minm + 1)) + minm;
 }
+
+export function localZoneHour(date) {
+    date.setTime(date.getTime() - (180 * 60 * 1000));
+}

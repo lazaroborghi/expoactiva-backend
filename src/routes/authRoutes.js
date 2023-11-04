@@ -102,7 +102,6 @@ authRouter.post('/login', async (req, res) => {
     const { email, password } = req.body;
 
     try {
-
         const user = await User.findOne({ email: email });
 
         if (!user) { return res.status(401).json({ error: 'Usuario incorrecto' }); }
@@ -112,8 +111,10 @@ authRouter.post('/login', async (req, res) => {
         try {
             const token = await generateToken(user, password);
             res.json({ user, token });
+            console.log('que devuelvo?')
         } catch (error) {
-            if (error.message === 'Contraseña incorrecta') { return res.status(401).json({ error: 'Contraseña incorrecta' }); }
+            console.log('entre aca?')
+            if (error.message === 'Contraseña incorrecta') { console.log(res.status(401).json({ error: 'Contraseña incorrecta' }) }
             else { throw error; }
         }
     } catch (error) {

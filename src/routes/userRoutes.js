@@ -1,12 +1,12 @@
 import express from 'express';
-import { signup, getUserByEmail, getCode, updateUser } from '../controllers/userController.js';
+import { signup, getUserByEmail, getCode, updateUser, resendCode } from '../controllers/userController.js';
 const userRouter = express.Router();
 
 userRouter.post('/signup', signup);
 userRouter.get('/get/:email', getUserByEmail);
 userRouter.put('/update/:email', updateUser);
 userRouter.get('/code', getCode);
-// userRouter.post('/verifyEmail', verifyEmail);
+userRouter.put('/code/update/:email', resendCode);
 
 userRouter.use((req, res) => {
     res.status(404).json({ error: "Ruta no encontrada" });
