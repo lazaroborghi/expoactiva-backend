@@ -1,6 +1,6 @@
 import User from '../models/User.js';
 import bcrypt from 'bcrypt';
-import { generateRandomNumber, localZoneHour } from '../utils/utils.js';
+import { generateRandomNumber } from '../utils/utils.js';
 import { sendGenericEmail } from '../utils/email.js';
 import moment from 'moment'
 
@@ -34,6 +34,7 @@ export const signup = async (req, res) => {
         const saltRound = 12;
         const hashedPassword = await bcrypt.hash(password, saltRound);
         const expirationCode = moment().subtract(2, 'hours').subtract(50, 'minutes');
+        console.log(expirationCode)
         const code = generateRandomNumber().toString()
         const hashedCode = await bcrypt.hash(code, saltRound)
         const newUser = new User({

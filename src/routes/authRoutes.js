@@ -110,12 +110,15 @@ authRouter.post('/login', async (req, res) => {
 
         try {
             const token = await generateToken(user, password);
-            res.json({ user, token });
-            console.log('que devuelvo?')
+            res.status(200).json({ user, token });
+
         } catch (error) {
-            console.log('entre aca?')
-            if (error.message === 'Contraseña incorrecta') { console.log(res.status(401).json({ error: 'Contraseña incorrecta' }) }
-            else { throw error; }
+
+            if (error.message === 'Contraseña incorrect') {
+                res.status(401).json({ error: 'Contraseña incorrecta' })
+            } else {
+                throw error;
+            }
         }
     } catch (error) {
         console.error(error);
