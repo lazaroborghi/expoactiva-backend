@@ -3,7 +3,6 @@ import {
     newLocation,
     getLocationsByDateTime,
     getLocationsByDevice,
-    addInterests,
     getLocationsByDateRange,
     getLocationsByInterests,
     getAllLocations,
@@ -21,9 +20,6 @@ locationRouter.get("/datetime", getLocationsByDateTime);
 
 // Obtener ubicaciones por dispositivo
 locationRouter.get("/device/:deviceId", getLocationsByDevice);
-
-// Añadir intereses a una ubicación existente
-locationRouter.put("/:id/interests", addInterests);
 
 // Obtener ubicaciones por un rango de fechas
 locationRouter.get("/daterange", getLocationsByDateRange);

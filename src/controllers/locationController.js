@@ -2,7 +2,7 @@ import Location from '../models/Location.js';
 
 // Crear una nueva ubicación
 export const newLocation = async (req, res) => {
-    const { longitude, latitude, date, time, deviceId, interests } = req.body;
+    const { longitude, latitude, date, time, deviceId, interests, ageRange } = req.body;
 
     const location = new Location({
         longitude,
@@ -10,7 +10,8 @@ export const newLocation = async (req, res) => {
         date,
         time,
         deviceId,
-        interests: interests || [] // Se añadirán los intereses si se proporcionan
+        interests: interests || [],
+        ageRange: ageRange || ''    
     });
 
     try {
@@ -56,25 +57,6 @@ export const getLocationsByDevice = async (req, res) => {
         }
         
         res.status(200).json(locations);
-    } catch (error) {
-        res.status(400).json({ message: error.message });
-    }
-};
-
-
-// Añadir intereses a una ubicación existente
-export const addInterests = async (req, res) => {
-    const { id } = req.params;
-    const { interests } = req.body;
-
-    try {
-        const location = await Location.findById(id);
-        if (!location) {
-            return res.status(404).json({ message: 'Location not found' });
-        }
-        location.interests = [...location.interests, ...interests];
-        await location.save();
-        res.status(200).json(location);
     } catch (error) {
         res.status(400).json({ message: error.message });
     }
@@ -152,10 +134,6 @@ export const getLocationsFromDateTimeToNow = async (req, res) => {
                 $lte: new Date()
             }
         });
-        
-        if (locations.length === 0) {
-            return res.status(404).json(locations);
-        }
         
         res.status(200).json(locations);
     } catch (error) {

@@ -9,8 +9,6 @@ const { expect } = chai;
 
 describe('Locations API', () => {
 
-    let locationId; // Para almacenar el ID de la ubicación creada
-
     before(function() {
         this.timeout(5000); // Ajustar el tiempo de espera a 5000ms
         return connect();
@@ -29,7 +27,6 @@ describe('Locations API', () => {
             interests: []
         });
         await newLocation.save();
-        locationId = newLocation._id; // Guardar el ID para su uso posterior en las pruebas
     });
 
     afterEach(async () => await clearDatabase());
@@ -63,16 +60,6 @@ describe('Locations API', () => {
     it('should get locations by device ID', done => {
         chai.request(app)
             .get('/locations/device/device1')
-            .end((err, res) => {
-                expect(res).to.have.status(200);
-                done();
-            });
-    });
-
-    it('should add interests to an existing location', done => {
-        chai.request(app)
-            .put(`/locations/${locationId}/interests`)
-            .send({ interests: ['Swimming', 'Reading'] })
             .end((err, res) => {
                 expect(res).to.have.status(200);
                 done();
@@ -119,16 +106,6 @@ describe('Locations API', () => {
             });
     });
 
-    // Prueba para añadir intereses a una ubicación no existente
-    it('should return 404 when adding interests to a non-existing location', done => {
-        chai.request(app)
-            .put('/locations/999999999999/interests')
-            .send({ interests: ['Swimming', 'Reading'] })
-            .end((err, res) => {
-                expect(res).to.have.status(404);
-                done();
-            });
-    });
 
     // Prueba para obtener ubicaciones sin intereses específicos
     it('should return 200 but an empty list when fetching locations by non-matching interests', done => {
