@@ -29,16 +29,20 @@ const userSchema = new mongoose.Schema({
         type: Boolean,
         require: true
     },
-    interests: {
-        type: Array,
-        require: false,
-        default: []
-    },
+    interests: [
+        {
+            type: String,
+        }
+    ],
     tickets: [
         {
             type: String,
         }
-    ]
+    ],
+    google: {
+        type: Boolean,
+        default: false
+    },
 });
 
 export default mongoose.model('User', userSchema);
