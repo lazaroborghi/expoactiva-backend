@@ -1,10 +1,10 @@
 import express from 'express';
 import jwt from 'jsonwebtoken';
 import { OAuth2Client } from 'google-auth-library';
-import UserServices from "../services/UserServices.js";
 import { getSecret } from "../utils/secretManager.js";
 import User from '../models/User.js';
 import bcrypt from 'bcrypt';
+import { findOrCreateGoogleUser } from '../controllers/userController.js';
 
 const authRouter = express.Router();
 
@@ -41,7 +41,7 @@ authRouter.post('/google', async (req, res) => {
 
         const ticket = await oAuth2Client.verifyIdToken({
             idToken: tokenId,
-            audience: CLIENT, // Verificamos usando el client ID correspondiente
+            audience: CLIENT,
         });
 
         const payload = ticket.getPayload();
@@ -54,7 +54,7 @@ authRouter.post('/google', async (req, res) => {
         };
 
         // Autentica y crea/encuentra al usuario
-        const user = await UserServices.findOrCreateUser(profile);
+        const user = await findOrCreateGoogleUser(profile);
 
         // Crea y envía el JWT
         const jwtPayload = { id: user._id, email: user.email };

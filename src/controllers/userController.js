@@ -4,14 +4,15 @@ import { generateRandomNumber } from '../utils/utils.js';
 import { sendGenericEmail } from '../utils/email.js';
 import moment from 'moment'
 
-export const findOrCreateLocalUser = async (payload) => {
+export const findOrCreateGoogleUser = async (payload) => {
     try {
         let user = await User.findOne({ email: payload.email });
         if (!user) {
             user = new User({
                 name: payload.name,
                 email: payload.email,
-                picture: payload.picture
+                picture: payload.picture,
+                google: true,
             });
             await user.save();
         }
