@@ -8,8 +8,4 @@ userRouter.put('/update/:email', updateUser);
 userRouter.get('/code', getCode);
 userRouter.put('/code/update/:email', resendCode);
 
-userRouter.use((req, res) => {
-    res.status(404).json({ error: "Ruta no encontrada" });
-});
-
 export default userRouter;

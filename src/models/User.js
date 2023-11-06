@@ -15,19 +15,15 @@ const userSchema = new mongoose.Schema({
     },
     birthDay: {
         type: String,
-        require: false
     },
     code: {
         type: String,
-        require: true
     },
     expirationCode: {
         type: Date,
-        require: true
     },
     validateEmail: {
         type: Boolean,
-        require: true
     },
     interests: [
         {
@@ -36,7 +32,13 @@ const userSchema = new mongoose.Schema({
     ],
     tickets: [
         {
-            type: String,
+            ticketId: {
+                type: String,
+            },
+            used: {
+                type: Boolean,
+                default: false
+            }
         }
     ],
     google: {

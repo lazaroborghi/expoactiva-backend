@@ -9,18 +9,54 @@ export const purchaseTicket = async (req, res) => {
             return res.status(403).json({ error: "Pagos deshabilitados", data: false });
         }
 
-        const ticketId = uuidv4();
-        const user = await User.findOneAndUpdate({ email: req.params.email }, { $push: { tickets: ticketId } }, { new: true });
+        const { email, quantity } = req.body;
+
+        const tickets = [];
+        
+        for (let i = 0; i < quantity; i++) {
+            const ticket = {
+                ticketId: uuidv4(),
+                used: false,
+            }
+
+            tickets.push(ticket);
+        }
+
+        // encontrar usuario con el email y agregarle los tickets
+        const user = await User.findOneAndUpdate({ email: email }, { $push: { tickets: { $each: tickets } } }, { new: true });
 
         if (!user) {
             return res.status(404).json({ error: "Usuario no encontrado" });
         }
 
-        return res.status(200).json({ message: "Compra realizada con éxito", data: true, ticketId: ticketId });
+        return res.status(200).json({ message: "Compra realizada con éxito", data: true, tickets });
 
     } catch (err) {
         console.error("Error handle purchase:", err);
         return res.status(500).json({ error: err.message });
     }
 
+}
+
+export const useTicket = async (req, res) => {
+    try {
+        const { email, ticketId } = req.body;
+        
+        // Actualiza el estado 'used' de la entrada a usado
+        const user = await User.findOneAndUpdate(
+            { email: email, 'tickets.ticketId': ticketId },
+            { $set: { 'tickets.$.used': true } },
+            { new: true }
+        );
+
+        if (!user) {
+            return res.status(404).json({ error: "Usuario o entrada no encontrados" });
+        }
+
+        return res.status(200).json({ message: "Entrada utilizada con éxito" });
+
+    } catch (err) {
+        console.error("Error al utilizar la entrada:", err);
+        return res.status(500).json({ error: err.message });
+    }
 }

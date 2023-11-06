@@ -1,8 +1,9 @@
 import express from 'express';
-import {purchaseTicket} from '../controllers/ticketController.js';
+import {purchaseTicket, useTicket} from '../controllers/ticketController.js';
 
 const ticketRouter = express.Router();
 
 ticketRouter.post('/purchase', purchaseTicket);
+ticketRouter.post('/use', useTicket);
 
 export default ticketRouter;
