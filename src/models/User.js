@@ -32,7 +32,12 @@ const userSchema = new mongoose.Schema({
     validateEmail: {
         type: Boolean,
         require: true
-    }
+    },
+    tickets: [
+        {
+            type: String,
+        }
+    ]
 });
 
 export default mongoose.model('User', userSchema);
