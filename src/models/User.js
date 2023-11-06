@@ -33,7 +33,12 @@ const userSchema = new mongoose.Schema({
         type: Array,
         require: false,
         default: []
-    }
+    },
+    tickets: [
+        {
+            type: String,
+        }
+    ]
 });
 
 export default mongoose.model('User', userSchema);
