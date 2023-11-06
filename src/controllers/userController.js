@@ -22,29 +22,30 @@ export const findOrCreateLocalUser = async (payload) => {
 
 export const signup = async (req, res) => {
     try {
-        let { name, email, password, birthDay } = req.body;
+        let { name, email, birthDay, interests } = req.body;
         name = name.trim();
         email = email.trim();
-        password = password.trim();
+
+        console.log(interests)
 
         const existingUser = await User.findOne({ email });
+        const formatedDate = moment(birthDay).add(3, 'hours').format('DD-MM-YYYY');
 
         if (existingUser) { return res.status(400).json({ error: 'Usuario ya existe' }); }
 
         const saltRound = 12;
-        const hashedPassword = await bcrypt.hash(password, saltRound);
         const expirationCode = moment().subtract(2, 'hours').subtract(50, 'minutes');
-        console.log(expirationCode)
         const code = generateRandomNumber().toString()
         const hashedCode = await bcrypt.hash(code, saltRound)
+
+
         const newUser = new User({
             name,
             email,
-            password: hashedPassword,
-            birthDay,
+            birthDay: formatedDate,
+            interests,
             code: hashedCode,
             expirationCode,
-            validateEmail: false
         });
 
         const savedUser = await newUser.save();
@@ -54,7 +55,7 @@ export const signup = async (req, res) => {
         else { return res.status(200).json({ message: 'Usuario creado con éxito, pero no se pudo enviar el correo', data: savedUser }); }
 
     } catch (err) {
-        console.log('Error en la llamada')
+
         res.status(500).json({ error: 'Error en el servidor' });
     }
 };
@@ -79,8 +80,9 @@ export const getUserByEmail = async (req, res) => {
         const { email } = req.params;
         const foundUser = await User.findOne({ email: email });
 
-        if (!foundUser) { return res.status(403).json({ error: "User not found" }); }
-        return res.status(200).json(foundUser);
+        if (!foundUser) return res.status(403).json({ error: "User not found" })
+
+        if (foundUser) return res.status(200).json(foundUser);
 
     } catch (error) { return res.status(500).json({ error: error.message }); }
 };
@@ -97,11 +99,14 @@ export const getCode = async (req, res) => {
         bcrypt.compare(code, foundUser.code, async (err, result) => {
             if (result) {
                 if (now.isAfter(foundUser.expirationCode)) {
+
                     return res.status(403).json({ error: "Código vencido" });
                 } else {
+
                     return res.status(200).json({ error: "Código Correcto" });
                 }
             } else {
+
                 return res.status(400).json({ error: "Código incorrecto" });
             }
         });
@@ -132,7 +137,7 @@ export const resendCode = async function (req, res) {
         }
 
         const now = moment().subtract(3, 'hours');
-        if (now.isAfter(user.expirationCode)) {
+        if (now.isAfter(user.expirationCode) || user.expirationCode === null) {
 
             const code = generateRandomNumber().toString();
             const hashedCode = await bcrypt.hash(code, saltRound);
@@ -157,4 +162,3 @@ export const resendCode = async function (req, res) {
         return res.status(500).json({ error: err.message });
     }
 };
-

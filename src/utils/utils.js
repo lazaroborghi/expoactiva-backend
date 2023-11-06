@@ -8,3 +8,5 @@ export function generateRandomNumber() {
 export function localZoneHour(date) {
     date.setTime(date.getTime() - (180 * 60 * 1000));
 }
+
+

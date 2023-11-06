@@ -13,12 +13,8 @@ const userSchema = new mongoose.Schema({
         type: String,
         default: null
     },
-    password: {
-        type: String,
-        require: false
-    },
     birthDay: {
-        type: Date,
+        type: String,
         require: false
     },
     code: {
@@ -32,6 +28,11 @@ const userSchema = new mongoose.Schema({
     validateEmail: {
         type: Boolean,
         require: true
+    },
+    interests: {
+        type: Array,
+        require: false,
+        default: []
     }
 });
 
