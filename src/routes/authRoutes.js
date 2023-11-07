@@ -21,50 +21,35 @@ const createToken = async (payload, secretKey) => {
 };
 
 authRouter.post('/google', async (req, res) => {
-    const tokenId = req.body.tokenId; // El token ID enviado desde la aplicación móvil
-    const platform = req.body.platform; // La plataforma desde la que se está autenticando el usuario
-    const IOS_CLIENT_ID = req.body.IOS_CLIENT_ID; // El client ID de iOS
-
-    const WEB_CLIENT_ID = await getWebClientId();
-
-    const CLIENT = platform === 'android' ? WEB_CLIENT_ID : IOS_CLIENT_ID;
-
-    console.log('WEB_CLIENT_ID', WEB_CLIENT_ID);
-    console.log('IOS_CLIENT_ID', IOS_CLIENT_ID);
-    console.log('CLIENT', CLIENT);
-
-    const oAuth2Client = new OAuth2Client(CLIENT);
+    const tokenId = req.body.tokenId;
+    const platform = req.body.platform;
+    const IOS_CLIENT_ID = req.body.IOS_CLIENT_ID;
 
     try {
-        console.log('tokenId', tokenId);
-        console.log('platform', platform);
-
+        const WEB_CLIENT_ID = await getWebClientId();
+        const CLIENT_ID = platform === 'android' ? WEB_CLIENT_ID : IOS_CLIENT_ID;
+        const oAuth2Client = new OAuth2Client(CLIENT_ID);
+        
         const ticket = await oAuth2Client.verifyIdToken({
             idToken: tokenId,
-            audience: CLIENT,
+            audience: CLIENT_ID,
         });
 
         const payload = ticket.getPayload();
-        console.log('payload', payload);
-
-        const profile = {
+        const user = await findOrCreateGoogleUser({
             name: payload.name,
             email: payload.email,
             picture: payload.picture,
-        };
+        });
 
-        // Autentica y crea/encuentra al usuario
-        const user = await findOrCreateGoogleUser(profile);
-
-        // Crea y envía el JWT
         const jwtPayload = { id: user._id, email: user.email };
         const secretKey = await getSecret('KEY');
         const token = await createToken(jwtPayload, secretKey);
 
-        res.json({ token, user: user });
-
+        res.json({ token, user });
     } catch (error) {
-        return res.status(401).json({ error: 'Authentication failed' });
+        console.error("Error in Google authentication:", error);
+        return res.status(401).json({ error: 'Authentication failed', details: error.message });
     }
 });
 
