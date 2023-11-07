@@ -60,3 +60,23 @@ export const useTicket = async (req, res) => {
         return res.status(500).json({ error: err.message });
     }
 }
+
+export const getTickets = async (req, res) => {
+    try {
+
+        const { email } = req.params;
+
+        // Busca el usuario por email y devuelve las entradas
+        const user = await User.findOne({ email: email }, { tickets: 1 });
+
+        if (!user) {
+            return res.status(404).json({ error: "Usuario no encontrado" });
+        }
+
+        return res.status(200).json({ tickets: user.tickets });
+
+    } catch (err) {
+        console.error("Error al obtener entradas:", err);
+        return res.status(500).json({ error: err.message });
+    }
+}
