@@ -4,7 +4,10 @@ import User from '../models/User.js';
 
 export const purchaseTicket = async (req, res) => {
     try {
-        const config = await Config.findOne();
+        const config = await Config.findById("654982d398a6c46a76b37e29");
+
+        console.log('config', config);
+
         if (!config || !config.acceptPayments) {
             return res.status(403).json({ error: "Pagos deshabilitados", data: false });
         }
