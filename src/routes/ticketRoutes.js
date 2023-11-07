@@ -5,6 +5,6 @@ const ticketRouter = express.Router();
 
 ticketRouter.post('/purchase', purchaseTicket);
 ticketRouter.post('/use', useTicket);
-ticketRouter.get('/', getTickets);
+ticketRouter.get('/:email', getTickets);
 
 export default ticketRouter;
