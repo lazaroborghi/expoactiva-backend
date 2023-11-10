@@ -13,6 +13,8 @@ export const purchaseTicket = async (req, res) => {
         }
 
         const { email, quantity } = req.body;
+        console.log('email', email);
+        console.log('quantity', quantity);
 
         const tickets = [];
         
