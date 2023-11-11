@@ -14,4 +14,4 @@ export function localZoneHour(date) {
 export function isVerificationCodeValid(expirationCode) {
     const now = moment().subtract(3, 'hours');
     return now.isBefore(expirationCode);
-};
+}
