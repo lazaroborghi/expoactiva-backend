@@ -3,7 +3,6 @@ import { getSecret } from '../utils/secretManager.js';
 
 // Middleware para verificar jwt, deja pasar a las rutas solo si el token es valido
 const authenticateJWT = async (req, res, next) => {
-    // Toma el token desde el header (Bearer: Token)
     const authHeader = req.headers.authorization;
     const token = authHeader && authHeader.split(' ')[1];
     const secretKey = await getSecret('KEY');
@@ -13,22 +12,15 @@ const authenticateJWT = async (req, res, next) => {
         return res.sendStatus(401);
     }
 
-    console.log("Token received:", token);
-
-    // Verifica si el token es correcto
-    jwt.verify(token, secretKey, (err, data) => {
-        if (err) {
-            return res.status(403).json({ message: 'Invalid or expired token.' });
-        }
-
+    try {
+        const data = jwt.verify(token, secretKey);
         console.log("Token verified:", data);
-
-        if (data) {
-            next();
-        } else {
-            res.sendStatus(403);
-        }
-    });
+        req.user = data;
+        next();
+    } catch (err) {
+        console.error("Token verification failed:", err);
+        return res.status(403).json({ message: 'Invalid or expired token.' });
+    }
 };
 
 export default authenticateJWT;

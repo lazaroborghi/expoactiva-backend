@@ -15,30 +15,36 @@ const userSchema = new mongoose.Schema({
     },
     birthDay: {
         type: String,
-        require: false
     },
     code: {
         type: String,
-        require: true
     },
     expirationCode: {
         type: Date,
-        require: true
     },
     validateEmail: {
         type: Boolean,
-        require: true
     },
-    interests: {
-        type: Array,
-        require: false,
-        default: []
-    },
-    tickets: [
+    interests: [
         {
             type: String,
         }
-    ]
+    ],
+    tickets: [
+        {
+            ticketId: {
+                type: String,
+            },
+            used: {
+                type: Boolean,
+                default: false
+            }
+        }
+    ],
+    google: {
+        type: Boolean,
+        default: false
+    },
 });
 
 export default mongoose.model('User', userSchema);
