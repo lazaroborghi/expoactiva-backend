@@ -51,8 +51,14 @@ export const signup = async (req, res) => {
         const savedUser = await newUser.save();
         const emailSent = await sendVerificationEmail(email, name, code);
 
-        if (emailSent) { return res.status(201).json({ message: 'Usuario creado con éxito y correo enviado', data: savedUser }); }
-        else { return res.status(200).json({ message: 'Usuario creado con éxito, pero no se pudo enviar el correo', data: savedUser }); }
+        if (emailSent) {
+            console.log('Funciona el envio de correo')
+            return res.status(201).json({ message: 'Usuario creado con éxito y correo enviado', data: savedUser });
+        }
+        else {
+            console.log('No funciona el envio de correo')
+            return res.status(200).json({ message: 'Usuario creado con éxito, pero no se pudo enviar el correo', data: savedUser });
+        }
 
     } catch (err) {
 
@@ -67,6 +73,7 @@ async function sendVerificationEmail(email, name, code) {
             Tu código de verificación es: 
             <a href="#" style="color: blue; text-decoration: underline; cursor: pointer;">${code}</a>
             <br><br>
+            Si no fuiste tú, ponte en contacto con nosotros.
         `;
 
     try {
@@ -162,4 +169,25 @@ export const resendCode = async function (req, res) {
         return res.status(500).json({ error: err.message });
     }
 };
+
+
+export const deleteAccount = async (req, res) => {
+
+    try {
+        const { email } = req.params;
+        const user = await User.findOne({ email });
+
+        if (!user) {
+            return res.status(405).json({ message: 'No se encuentra el usuario' });
+        }
+
+        await User.findByIdAndRemove(user._id);
+        res.status(204).send();
+
+    } catch (error) {
+        console.error(error);
+        res.status(500).json({ message: 'Error interno' });
+    }
+};
+
 

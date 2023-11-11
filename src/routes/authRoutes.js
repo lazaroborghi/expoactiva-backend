@@ -5,6 +5,7 @@ import UserServices from "../services/UserServices.js";
 import { getSecret } from "../utils/secretManager.js";
 import User from '../models/User.js';
 import bcrypt from 'bcrypt';
+import { isVerificationCodeValid } from '../utils/utils.js';
 
 const authRouter = express.Router();
 
@@ -128,17 +129,34 @@ authRouter.post('/login', async (req, res) => {
 
 authRouter.post('/firstLogin', async (req, res) => {
     const { email, password } = req.body;
-    try {
-        const user = await User.findOne({ email: email });
-        if (!user) { return res.status(401).json({ error: 'Usuario incorrecto' }); }
-        try {
-            const token = await generateTokenByCode(user, password);
-            res.json({ user, token, message: 'firstLogin' });
-        } catch (error) {
-            if (error.message === 'Contraseña incorrecta') { return res.status(401).json({ error: 'Código no valido' }); }
-            else { throw error; }
-        }
-    } catch (error) { res.status(500).json({ error: 'Error en el servidor' }); }
-});
 
+    try {
+        const user = await User.findOne({ email });
+
+        if (!user) {
+            return res.status(404).json({ error: 'Usuario no encontrado' });
+        }
+
+        const isCodeValid = isVerificationCodeValid(user.expirationCode);
+
+        if (!isCodeValid) {
+            return res.status(401).json({ error: 'Código vencido' });
+        }
+
+        const token = await generateTokenByCode(user, password);
+
+        if (!token) {
+            return res.status(401).json({ error: 'Contraseña incorrecta o código no válido' });
+        }
+        res.status(200).json({ user, token, message: 'firstLogin' });
+    } catch (error) {
+        console.error('Error en el servidor:', error);
+
+        if (error.message === 'Contraseña incorrecta') {
+            return res.status(401).json({ error: 'Contraseña incorrecta' });
+        } else {
+            res.status(500).json({ error: 'Error en el servidor' });
+        }
+    }
+});
 export default authRouter;
