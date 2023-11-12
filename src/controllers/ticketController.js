@@ -9,7 +9,7 @@ export const purchaseTicket = async (req, res) => {
         console.log('config', config);
 
         if (!config || !config.acceptPayments) {
-            return res.status(403).json({ error: "Pagos deshabilitados", data: false });
+            return res.status(200).json({ error: "Pagos deshabilitados", data: false });
         }
 
         const { email, quantity } = req.body;
