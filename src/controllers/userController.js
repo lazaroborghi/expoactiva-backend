@@ -96,6 +96,8 @@ export const getUserByEmail = async (req, res) => {
 
         if (!foundUser) return res.status(403).json({ error: "User not found" })
 
+        if (foundUser && foundUser.google) return res.status(400).json({error: 'El usuario ya existe con otro metodo de autenticacion', google: true});
+
         if (foundUser) return res.status(200).json(foundUser);
 
     } catch (error) { return res.status(500).json({ error: error.message }); }
