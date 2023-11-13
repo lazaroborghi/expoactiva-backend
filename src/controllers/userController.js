@@ -4,7 +4,7 @@ import { generateRandomNumber } from '../utils/utils.js';
 import { sendGenericEmail } from '../utils/email.js';
 import moment from 'moment'
 
-export const findOrCreateGoogleUser = async (payload) => {
+export const findOrCreateGoogleUser = async (payload, res) => {
     try {
         let user = await User.findOne({ email: payload.email });
 
@@ -37,7 +37,8 @@ export const signup = async (req, res) => {
         const existingUser = await User.findOne({ email });
         const formatedDate = moment(birthDay).add(3, 'hours').format('DD-MM-YYYY');
 
-        if (existingUser) { return res.status(400).json({ error: 'Usuario ya existe' }); }
+        if (existingUser && existingUser.google) { return res.status(400).json({ error: 'Usuario ya existe con otro metodo de autenticacion', google: true }); }
+        if (existingUser) { return res.status(400).json({ error: 'Usuario ya existe', google: false }); }
 
         const saltRound = 12;
         const expirationCode = moment().subtract(2, 'hours').subtract(50, 'minutes');

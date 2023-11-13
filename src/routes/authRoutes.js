@@ -41,7 +41,9 @@ authRouter.post('/google', async (req, res) => {
             name: payload.name,
             email: payload.email,
             picture: payload.picture,
-        });
+        }, res);
+
+        if (!user) { return res.status(400).json({ error: 'El usuario ya existe con otro metodo de autenticacion' }); }
 
         const jwtPayload = { id: user._id, email: user.email };
         const secretKey = await getSecret('KEY');
