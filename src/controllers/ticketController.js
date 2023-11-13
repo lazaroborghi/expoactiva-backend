@@ -1,6 +1,5 @@
 import { v4 as uuidv4 } from 'uuid';
 import Config from '../models/Config.js';
-import User from '../models/User.js';
 import Ticket from '../models/Ticket.js';
 
 export const purchaseTicket = async (req, res) => {
@@ -31,6 +30,7 @@ export const purchaseTicket = async (req, res) => {
                 email: email,
                 ticketId: ticketId,
                 used: false,
+                shared: false
             });
 
             await ticket.save();  // Guardamos en base
@@ -49,23 +49,23 @@ export const purchaseTicket = async (req, res) => {
 
 export const useTicket = async (req, res) => {
     try {
-        const { email, ticketId } = req.body;
+        const { ticketId } = req.body;
 
-        // Actualiza el estado 'used' de la entrada a usado
-        const user = await User.findOneAndUpdate(
-            { email: email, 'tickets.ticketId': ticketId },
-            { $set: { 'tickets.$.used': true } },
-            { new: true }
-        );
+        const ticket = await Ticket.findOne({ ticketId: ticketId });
 
-        if (!user) {
-            return res.status(404).json({ error: "Usuario o entrada no encontrados" });
+        if (!ticket) {
+            return res.status(404).json({ error: "Entrada no válida" });
         }
 
-        return res.status(200).json({ message: "Entrada utilizada con éxito" });
+        if (ticket.used) {
+            return res.status(200).json({ message: "Entrada ya utilizada", data: false });
+        }
 
+        await Ticket.findOneAndUpdate({ ticketId: ticketId }, { used: true }, { new: true });
+
+        return res.status(200).json({ message: "Entrada utilizada con éxito", data: true });
     } catch (err) {
-        console.error("Error al utilizar la entrada:", err);
+        console.error("Error handle use ticket:", err);
         return res.status(500).json({ error: err.message });
     }
 }

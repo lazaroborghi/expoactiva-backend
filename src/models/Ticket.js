@@ -14,6 +14,10 @@ const ticketSchema = new mongoose.Schema({
         type: String,
         required: true
     },
+    shared: {
+        type: Boolean,
+        default: false
+    },
 });
 
 export default mongoose.model('Ticket', ticketSchema);
