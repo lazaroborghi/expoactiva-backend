@@ -7,6 +7,11 @@ import moment from 'moment'
 export const findOrCreateGoogleUser = async (payload) => {
     try {
         let user = await User.findOne({ email: payload.email });
+
+        if (user && !user.google) {
+            return res.status(400).json({ error: 'Ya existe un usuario con ese correo' });
+        }
+
         if (!user) {
             user = new User({
                 name: payload.name,
