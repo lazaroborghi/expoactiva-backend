@@ -116,7 +116,7 @@ export const updateTicket = async function (req, res) {
             return res.status(404).json({ error: "No se puede modificar el email de una entrada no compartida" });
         }
 
-        delete req.body.redeem;
+        req.body.redeem && delete req.body.redeem;
 
         ticket = await Ticket.findOneAndUpdate({ ticketId: req.params.ticketId }, req.body, { new: true });
 
