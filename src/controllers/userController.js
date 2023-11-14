@@ -31,11 +31,9 @@ export const signup = async (req, res) => {
         let { name, email, birthDay, interests } = req.body;
         name = name.trim();
         email = email.trim();
-
-        console.log(interests)
-
         const existingUser = await User.findOne({ email });
-        const formatedDate = moment(birthDay).add(3, 'hours').format('DD-MM-YYYY');
+        const formatedDate = moment(birthDay).format('DD-MM-YYYY');
+
 
         if (existingUser && existingUser.google) { return res.status(400).json({ error: 'Usuario ya existe con otro metodo de autenticacion', google: true }); }
         if (existingUser) { return res.status(400).json({ error: 'Usuario ya existe', google: false }); }
@@ -59,11 +57,11 @@ export const signup = async (req, res) => {
         const emailSent = await sendVerificationEmail(email, name, code);
 
         if (emailSent) {
-            console.log('Funciona el envio de correo')
+
             return res.status(201).json({ message: 'Usuario creado con éxito y correo enviado', data: savedUser });
         }
         else {
-            console.log('No funciona el envio de correo')
+
             return res.status(200).json({ message: 'Usuario creado con éxito, pero no se pudo enviar el correo', data: savedUser });
         }
 
@@ -96,7 +94,7 @@ export const getUserByEmail = async (req, res) => {
 
         if (!foundUser) return res.status(403).json({ error: "User not found" })
 
-        if (foundUser && foundUser.google) return res.status(400).json({error: 'El usuario ya existe con otro metodo de autenticacion', google: true});
+        if (foundUser && foundUser.google) return res.status(400).json({ error: 'El usuario ya existe con otro metodo de autenticacion', google: true });
 
         if (foundUser) return res.status(200).json(foundUser);
 
@@ -127,7 +125,7 @@ export const getCode = async (req, res) => {
             }
         });
     } catch (error) {
-        console.error("Error:", error);
+
         return res.status(500).json({ error: error.message });
     }
 }
@@ -194,7 +192,6 @@ export const deleteAccount = async (req, res) => {
         res.status(204).send();
 
     } catch (error) {
-        console.error(error);
         res.status(500).json({ message: 'Error interno' });
     }
 };
