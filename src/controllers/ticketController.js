@@ -109,7 +109,14 @@ export const getTicketsById = async (req, res) => {
 
 export const updateTicket = async function (req, res) {
     try {
-        const ticket = await Ticket.findOneAndUpdate({ ticketId: req.params.ticketId }, req.body, { new: true });
+
+        let ticket = await Ticket.findOne({ ticketId: req.params.ticketId });
+
+        if (req.body.email && req.body.email !== ticket.email && !ticket.shared) {
+            return res.status(404).json({ error: "No se puede modificar el email de una entrada no compartida" });
+        }
+
+        ticket = await Ticket.findOneAndUpdate({ ticketId: req.params.ticketId }, req.body, { new: true });
 
         if (ticket) { res.status(200).json(ticket); }
         else { res.status(404).json({ error: "Entrada no encontrada" }); }
