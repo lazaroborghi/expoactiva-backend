@@ -24,7 +24,7 @@ const locationSchema = new mongoose.Schema({
     interests: [
         {
             type: String,
-        }
+        },
     ],
     ageRange: {
         type: String,

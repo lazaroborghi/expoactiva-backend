@@ -22,6 +22,7 @@ export const newLocation = async (req, res) => {
         await location.save();
         res.status(201).json(location);
     } catch (error) {
+        console.log('error', error)
         res.status(400).json({ message: error.message });
     }
 };
