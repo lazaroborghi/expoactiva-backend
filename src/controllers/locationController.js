@@ -4,15 +4,19 @@ import Location from '../models/Location.js';
 export const newLocation = async (req, res) => {
     const { longitude, latitude, date, time, deviceId, interests, ageRange } = req.body;
 
+    console.log('body', req.body);
+
     const location = new Location({
         longitude,
         latitude,
         date,
         time,
         deviceId,
-        interests: interests || [],
-        ageRange: ageRange || ''    
+        interests: interests,
+        ageRange: ageRange    
     });
+
+    console.log('location', location);
 
     try {
         await location.save();
