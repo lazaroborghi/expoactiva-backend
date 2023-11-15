@@ -11,6 +11,7 @@ import userRouter from "./routes/userRoutes.js";
 import openLocationRouter from "./routes/openLocationRoutes.js";
 import authMoshiMiddleware from "./middleware/authMoshiMiddleware.js";
 import ticketRouter from "./routes/ticketRoutes.js";
+import { deleteUsedTickets } from "./services/cron/usedTicketsCleanerCron.js";
 
 dotenv.config();
 
@@ -38,6 +39,13 @@ app.get('/tasks/checkForEvents', async (req, res) => {
     console.log('Ejecutando la tarea de verificación de eventos');
     await cleanUpUserEvents().catch(error => console.error('Error en cleanUpUserEvents', error));
     await checkForUpcomingEvents().catch(error => console.error('Error en checkForUpcomingEvents', error));
+    res.send('Tarea completada');
+});
+
+// Tarea para eliminar tickets usados
+app.get('/tasks/deleteUsedTickets', async (req, res) => {
+    console.log('Ejecutando la tarea de eliminación de tickets usados');
+    await deleteUsedTickets().catch(error => console.error('Error en deleteUsedTickets', error));
     res.send('Tarea completada');
 });
 
