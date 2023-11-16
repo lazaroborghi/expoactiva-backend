@@ -77,10 +77,6 @@ export const getTicketsByUser = async (req, res) => {
         // Busca el ticket por el email y devuelve los tickets
         const tickets = await Ticket.find({ email: email });
 
-        if (!tickets || tickets.length === 0) {
-            return res.status(404).json({ error: "No hay entradas para ese usuario" });
-        }
-
         return res.status(200).json(tickets);
 
     } catch (err) {
