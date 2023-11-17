@@ -18,7 +18,7 @@ async function getWebClientId() {
 const createToken = async (payload, secretKey) => {
     if (!secretKey) { throw new Error('secretKey is missing or empty'); }
 
-    return jwt.sign(payload, secretKey, { expiresIn: '48h' });
+    return jwt.sign(payload, secretKey, { expiresIn: '7d' });
 };
 
 authRouter.post('/google', async (req, res) => {
