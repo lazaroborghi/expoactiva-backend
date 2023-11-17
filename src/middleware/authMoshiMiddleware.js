@@ -1,7 +1,7 @@
 import axios from 'axios';
 
 // Valida token de moshi moshi
-const API_URL = "https://expoactivawebbackend.uc.r.appspot.com/token/validate";
+const API_URL = "https://expoactivaweb-405214.uc.r.appspot.com/token/validate";
 const authMoshiMiddleware = async (req, res, next) => {
     try {
         const authHeader = req.headers.authorization;
