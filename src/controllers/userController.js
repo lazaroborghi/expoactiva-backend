@@ -12,10 +12,14 @@ export const findOrCreateGoogleUser = async (payload, res) => {
         console.log('user', user);
         
         if (user && !user.google) {
+
+            console.log('ya existe usuario con ese correo');
             return res.status(400).json({ error: 'Ya existe un usuario con ese correo' });
         }
 
         if (!user) {
+
+            console.log('crear nuevo usuario');
             user = new User({
                 name: payload.name,
                 email: payload.email,
@@ -24,12 +28,14 @@ export const findOrCreateGoogleUser = async (payload, res) => {
                 birthDay: ''
 
             });
+
+            console.log('user save', user);
             await user.save();
         }
         
         console.log('user return', user);
         return user;
-    } catch (error) { throw new Error(error); }
+    } catch (error) { res.status(500).json({ error: 'Error en el servidor' }); }
 };
 
 export const signup = async (req, res) => {
