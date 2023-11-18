@@ -18,6 +18,8 @@ export const findOrCreateGoogleUser = async (payload, res) => {
                 email: payload.email,
                 picture: payload.picture,
                 google: true,
+                birthDay: ''
+
             });
             await user.save();
         }
