@@ -5,7 +5,7 @@ import axios from "axios";
 
 async function getEventById(eventId) {
     try {
-      const response = await axios.get(`https://expoactivawebbackend.uc.r.appspot.com/open/event/${eventId}`);
+      const response = await axios.get(`https://expoactivaweb-405214.uc.r.appspot.com/open/event/${eventId}`);
       
       console.log(response.data);
       return response.data;
