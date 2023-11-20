@@ -12,13 +12,14 @@ import openLocationRouter from "./routes/openLocationRoutes.js";
 import authMoshiMiddleware from "./middleware/authMoshiMiddleware.js";
 import ticketRouter from "./routes/ticketRoutes.js";
 import { deleteUsedTickets } from "./services/cron/usedTicketsCleanerCron.js";
+import eventRouter from './routes/eventRoutes.js'
 
 dotenv.config();
 
 const test = process.env.NODE_ENV === "test";
 
 // Conectarse a la base de datos
-!test && database.connect(); 
+!test && database.connect();
 
 // Crear el servidor
 const app = express();
@@ -33,6 +34,7 @@ app.use("/open/locations", openLocationRouter);
 app.use("/exhibitors", exhibitorRouter);
 app.use("/favourites", favouriteRouter);
 app.use("/user", userRouter);
+app.use("/events", eventRouter);
 
 // Tarea para enviar recordatorios de eventos (Notificaciones)
 app.get('/tasks/checkForEvents', async (req, res) => {
