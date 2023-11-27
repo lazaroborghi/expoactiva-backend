@@ -1,7 +1,7 @@
-import { Translate } from "@google-cloud/translate/build/src/v2/index";
+import { v2 } from "@google-cloud/translate";
 import { getSecret } from "../../utils/secretManager.js";
 
-const translate = new Translate({
+const translate = new v2.Translate({
     projectId: JSON.parse(getSecret('TRANSLATE_CREDENTIALS')).projectId,
     credentials: JSON.parse(getSecret('TRANSLATE_CREDENTIALS'))
 });
