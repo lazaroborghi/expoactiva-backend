@@ -1,5 +1,5 @@
 const {Translate} = require('@google-cloud/translate').v2;
-import { getSecret } from "../../utils/secretManager.js";
+const {getSecret} = require("../../utils/secretManager.js");
 
 const translate = new Translate({
     projectId: JSON.parse(getSecret('TRANSLATE_CREDENTIALS')).projectId,
