@@ -14,6 +14,7 @@ import ticketRouter from "./routes/ticketRoutes.js";
 import { deleteUsedTickets } from "./services/cron/usedTicketsCleanerCron.js";
 import eventRouter from './routes/eventRoutes.js'
 import deviceRequestRouter from "./routes/deviceRequestRoutes.js";
+import { translateHandler } from "./services/translate/translateHandler.js";
 
 dotenv.config();
 
@@ -37,6 +38,9 @@ app.use("/favourites", favouriteRouter);
 app.use("/user", userRouter);
 app.use("/events", eventRouter);
 app.use("/device", deviceRequestRouter);
+
+// Translate
+app.post("/translate", translateHandler);
 
 // Tarea para enviar recordatorios de eventos (Notificaciones)
 app.get('/tasks/checkForEvents', async (req, res) => {
