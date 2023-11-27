@@ -1,13 +1,17 @@
 import { v2 } from "@google-cloud/translate";
 import { getSecret } from "../../utils/secretManager.js";
 
-const translate = new v2.Translate({
-    projectId: JSON.parse(getSecret('TRANSLATE_CREDENTIALS')).projectId,
-    credentials: JSON.parse(getSecret('TRANSLATE_CREDENTIALS'))
-});
 
 const translateText = async (text, target) => {
     try {
+
+        const credentialsSecret = await getSecret('TRANSLATE_CREDENTIALS');
+
+        const translate = new v2.Translate({
+            credentials: JSON.parse(credentialsSecret),
+            projectId: JSON.parse(credentialsSecret).projectId
+        });
+
         const [translation] = await translate.translate(text, target);
         return translation;
     } catch (error) {
