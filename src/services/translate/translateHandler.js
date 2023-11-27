@@ -1,4 +1,4 @@
-import { Translate } from "@google-cloud/translate/build/src/v2/index.d.ts";
+import { Translate } from "@google-cloud/translate/build/src/v2/index";
 import { getSecret } from "../../utils/secretManager.js";
 
 const translate = new Translate({
