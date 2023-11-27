@@ -1,4 +1,4 @@
-import { Translate } from "@google-cloud/translate";
+const {Translate} = require('@google-cloud/translate').v2;
 import { getSecret } from "../../utils/secretManager.js";
 
 const translate = new Translate({
