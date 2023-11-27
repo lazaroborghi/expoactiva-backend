@@ -1,5 +1,5 @@
 import { Translate } from "@google-cloud/translate";
-import { getSecret } from "../../utils/secretManager";
+import { getSecret } from "../../utils/secretManager.js";
 
 const translate = new Translate({
     projectId: JSON.parse(getSecret('TRANSLATE_CREDENTIALS')).projectId,
