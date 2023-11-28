@@ -13,6 +13,10 @@ const translateText = async (texto, idiomaDestino) => {
         });
 
         const [translation] = await translate.translate(texto, idiomaDestino);
+
+        console.log(`Text: ${texto}`);
+        console.log(`Translation: ${translation}`);
+
         return translation;
     } catch (error) {
         console.error(error);
