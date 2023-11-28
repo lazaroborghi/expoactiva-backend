@@ -4,6 +4,8 @@ import { getSecret } from "../utils/secretManager.js"
 const apikeyMiddleware = async (req, res, next) => {
     try {
         const apikeySecret = await getSecret('APIKEY');
+        
+        console.log(req.headers.apikey, apikeySecret);
 
         if (req.headers.apikey === apikeySecret) {
             next();
