@@ -36,7 +36,7 @@ export const translateHandler = async (req, res) => {
         }
 
         const translation = await translateText(texto, idiomaDestino);
-        return res.status(200).json({ translation });
+        return res.status(200).json({ traduccion: translation });
     } catch (error) {
         console.error(error);
         return res.status(500).json({ message: "Internal server error" });
