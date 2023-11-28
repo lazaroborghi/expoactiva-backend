@@ -21,9 +21,11 @@ const translateText = async (text, target) => {
 
 export const translateHandler = async (req, res) => {
     try {
+        console.log(req.body)
         const {text, target} = req.body;
 
         if (!text || !target) {
+            console.log("Missing required fields: text and target")
             return res.status(400).json({
                 message: "Missing required fields: text and target"
             });
