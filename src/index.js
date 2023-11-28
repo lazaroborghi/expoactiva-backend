@@ -15,6 +15,7 @@ import { deleteUsedTickets } from "./services/cron/usedTicketsCleanerCron.js";
 import eventRouter from './routes/eventRoutes.js'
 import deviceRequestRouter from "./routes/deviceRequestRoutes.js";
 import { translateHandler } from "./services/translate/translateHandler.js";
+import apikeyMiddleware from "./middleware/apikeyMiddleware.js";
 
 dotenv.config();
 
@@ -25,6 +26,8 @@ const test = process.env.NODE_ENV === "test";
 
 // Crear el servidor
 const app = express();
+
+app.use(apikeyMiddleware); // Middleware que verifica el apikey
 
 app.use(express.json()); // Middleware que permite recibir JSON en el body de las peticiones
 
