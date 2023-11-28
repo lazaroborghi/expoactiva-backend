@@ -2,7 +2,7 @@ import { v2 } from "@google-cloud/translate";
 import { getSecret } from "../../utils/secretManager.js";
 
 
-const translateText = async (text, target) => {
+const translateText = async (texto, idiomaDestino) => {
     try {
 
         const credentialsSecret = await getSecret('TRANSLATE_CREDENTIALS');
@@ -12,7 +12,7 @@ const translateText = async (text, target) => {
             projectId: JSON.parse(credentialsSecret).projectId
         });
 
-        const [translation] = await translate.translate(text, target);
+        const [translation] = await translate.translate(texto, idiomaDestino);
         return translation;
     } catch (error) {
         console.error(error);
@@ -22,16 +22,16 @@ const translateText = async (text, target) => {
 export const translateHandler = async (req, res) => {
     try {
         console.log(req.body)
-        const {text, target} = req.body;
+        const {texto, idiomaDestino} = req.body;
 
-        if (!text || !target) {
+        if (!texto || !idiomaDestino) {
             console.log("Missing required fields: text and target")
             return res.status(400).json({
                 message: "Missing required fields: text and target"
             });
         }
 
-        const translation = await translateText(text, target);
+        const translation = await translateText(texto, idiomaDestino);
         return res.status(200).json({ translation });
     } catch (error) {
         console.error(error);
