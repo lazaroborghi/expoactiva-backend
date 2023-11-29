@@ -2,7 +2,7 @@ import { v2 } from "@google-cloud/translate";
 import { getSecret } from "../../utils/secretManager.js";
 
 
-const translateText = async (texto, idiomaDestino) => {
+export const translateText = async (texto, idiomaDestino) => {
     try {
 
         const credentialsSecret = await getSecret('TRANSLATE_CREDENTIALS');

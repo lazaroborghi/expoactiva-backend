@@ -2,6 +2,7 @@ import expo from "../../config/expoInstance.js";
 import UserEvent from "../../models/UserEvent.js";
 import { Expo } from 'expo-server-sdk';
 import axios from "axios";
+import { translateText } from "../translate/translateHandler.js";
 
 async function getEventById(eventId) {
     try {
@@ -103,7 +104,12 @@ const sendPushNotification = async (token, eventId, language) => {
     const event = await getEventById(eventId);
 
     const title = event.eventName !== '' ? event.eventName : 'Evento Expoactiva';
-    
+    let translatedTitle = title;
+
+    if (language !== 'es') {
+      translatedTitle = await translateText(title, language);
+    }
+
     const body = () => {
       if (language === 'en') {
         return 'Will start in 10 minutes!';
@@ -117,7 +123,7 @@ const sendPushNotification = async (token, eventId, language) => {
     let message = {
       to: token,
       sound: 'default',
-      title: title,
+      title: translatedTitle,
       body: body(),
       data: { idEvent: eventId },
     };
