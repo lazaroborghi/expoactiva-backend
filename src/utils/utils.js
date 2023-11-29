@@ -15,3 +15,10 @@ export function isVerificationCodeValid(expirationCode) {
     const now = moment().subtract(3, 'hours');
     return now.isBefore(expirationCode);
 }
+
+export function capitalize(word) {
+    if (word && typeof word === 'string') {
+        return word.charAt(0).toUpperCase() + word.slice(1).toLowerCase();
+    }
+    return '';
+}

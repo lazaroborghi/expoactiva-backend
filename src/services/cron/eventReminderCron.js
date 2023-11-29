@@ -3,6 +3,7 @@ import UserEvent from "../../models/UserEvent.js";
 import { Expo } from 'expo-server-sdk';
 import axios from "axios";
 import { translateText } from "../translate/translateHandler.js";
+import { capitalize } from "../../utils/utils.js";
 
 async function getEventById(eventId) {
     try {
@@ -109,6 +110,8 @@ const sendPushNotification = async (token, eventId, language) => {
     if (language !== 'es') {
       translatedTitle = await translateText(title, language);
     }
+
+    translatedTitle = capitalize(translatedTitle);
 
     const body = () => {
       if (language === 'en') {
