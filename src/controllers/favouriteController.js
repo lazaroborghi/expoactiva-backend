@@ -2,7 +2,7 @@ import UserEvent from "../models/UserEvent.js";
 
 // da de alta un favorito
 export const createEventForToken = async (req, res) => {
-    const { expoPushToken, eventId, eventStartTime } = req.body;
+    const { expoPushToken, eventId, eventStartTime, language } = req.body;
 
     try {
         // Verifica si el evento ya está asociado con el token
@@ -12,7 +12,7 @@ export const createEventForToken = async (req, res) => {
             return res.status(400).json({ message: "This event is already added to the token." });
         }
 
-        const newUserEvent = new UserEvent({ expoPushToken, eventId, eventStartTime }); 
+        const newUserEvent = new UserEvent({ expoPushToken, eventId, eventStartTime, language}); 
         const savedUserEvent = await newUserEvent.save();
 
         res.status(201).json(savedUserEvent);

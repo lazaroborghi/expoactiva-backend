@@ -77,7 +77,7 @@ export const checkForUpcomingEvents = async () => {
         const events = await UserEvent.find({
           timeToSendNotification: {
             $gte: new Date(currentDate),
-            $lt: new Date(currentDate.getTime() + 60000) // Agrega un minuto
+            $lt: new Date(currentDate.getTime() + 60000)
           },
           notificationSent: false,
         });
@@ -86,7 +86,7 @@ export const checkForUpcomingEvents = async () => {
 
         // Para cada evento, enviar una notificación push y marcar como notificado
         for (let event of events) {
-            await sendPushNotification(event.expoPushToken, event.eventId); // Asegúrate de pasar eventId también
+            await sendPushNotification(event.expoPushToken, event.eventId, event.language);
             event.notificationSent = true;
             await event.save();
         }
@@ -95,7 +95,7 @@ export const checkForUpcomingEvents = async () => {
     }
 };
 
-const sendPushNotification = async (token, eventId) => {
+const sendPushNotification = async (token, eventId, language) => {
   try {
 
     console.log('eventId', eventId);
@@ -103,12 +103,22 @@ const sendPushNotification = async (token, eventId) => {
     const event = await getEventById(eventId);
 
     const title = event.eventName !== '' ? event.eventName : 'Evento Expoactiva';
+    
+    const body = () => {
+      if (language === 'en') {
+        return 'Will start in 10 minutes!';
+      } else if (language === 'pt') {
+        return 'Começará em 10 minutos!';
+      } else {
+        return '¡Comenzará en 10 minutos!';
+      }
+    }
 
     let message = {
       to: token,
       sound: 'default',
       title: title,
-      body: '¡Comenzará en 10 minutos!',
+      body: body(),
       data: { idEvent: eventId },
     };
 
